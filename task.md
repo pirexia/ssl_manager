@@ -1,0 +1,63 @@
+# Tasks
+
+- [x] Project Initialization & Planning
+    - [x] Define Tech Stack & Requirements <!-- id: 0 -->
+    - [x] Initialize Git Repository <!-- id: 1 -->
+    - [x] Create Implementation Plan <!-- id: 2 -->
+- [x] Environment Setup
+    - [x] Create Virtual Environment <!-- id: 3 -->
+    - [x] Install Dependencies (Django, mysqlclient, cryptography) <!-- id: 4 -->
+    - [x] Configure Database (MariaDB/SQLite for dev) <!-- id: 5 -->
+- [/] Backend Development - Core
+    - [x] Initialize Django Project & App <!-- id: 6 -->
+    - [x] Implement Database Models (Users, Roles, Domains, CSRs) <!-- id: 7 -->
+    - [x] Implement Password Policies & Security <!-- id: 8 -->
+        - [x] Password complexity enforcement
+        - [x] Password expiration (90 days default)
+        - [x] Password history (prevent reuse of last 20 passwords)
+        - [x] Force password change on expiration
+    - [x] Implement Multi-Factor Authentication (MFA) <!-- id: 23 -->
+        - [x] Install and configure django-otp / qrcode
+        - [x] Create MFA setup view (QR code generation)
+        - [x] Implement MFA verification view (TOTP check)
+        - [x] Implement Trusted Device Logic (7-day expiry cookie)
+        - [x] Enforce MFA for login (optional or mandatory)
+    - [x] Implement CSR Generation Logic (OpenSSL/Cryptography) <!-- id: 9 -->
+    - [x] Implement Versioning System (Timestamp-based) <!-- id: 10 -->
+    - [x] Add Certificate Validity Date Fields <!-- id: 11 -->
+    - [x] Implement Certificate Upload & Date Extraction <!-- id: 12 -->
+        - [x] Certificate upload form with validation
+        - [x] Dual validation (Common Name + Public Key)
+        - [x] Support multiple formats (.crt, .cer, .pem)
+        - [x] Automatic date extraction from X.509 certificates
+        - [x] Download in multiple formats (CRT, CER, PFX)
+        - [x] Per-iteration upload buttons in history table
+- [/] Frontend Development
+    - [x] Design Base Templates (Navbar, Layout) <!-- id: 13 -->
+    - [x] Implement Homepage (Generate vs Search) <!-- id: 14 -->
+    - [x] Implement CSR Generation Wizard <!-- id: 15 -->
+    - [x] Implement Advanced Search & Detail View <!-- id: 16 -->
+        - [x] Live/Interactive Search (500ms debounce)
+        - [x] Multi-select Domain Filter
+        - [x] Expiration Date Filters (3 months, 1 month)
+        - [x] Sortable Columns (Common Name, Created, Expires)
+        - [x] Pagination (10/25/50/100 per page)
+        - [x] Focus Preservation & Cursor Position Restoration
+    - [x] Implement Iteration History View <!-- id: 17 -->
+    - [x] Implement Certificate Upload Form <!-- id: 18 -->
+    - [x] Implement Admin Panel (Custom & Django Admin) <!-- id: 19 -->
+    - [x] Implement Cookie Consent Banner <!-- id: 24 -->
+        - [x] Create cookie banner component
+        - [x] Store user consent preference
+        - [x] Disable Trusted Device feature if cookies not accepted
+        - [x] Show warning in MFA page if cookies disabled
+    - [ ] Implement Internationalization (i18n) <!-- id: 25 -->
+        - [ ] Configure Django i18n settings
+        - [ ] Mark all strings for translation
+        - [ ] Create translation files for ES, PT, FR, DE, IT
+        - [ ] Add language selector to navbar
+        - [ ] Translate all templates and messages
+- [ ] Verification & Deployment Prep
+    - [ ] Create Installer Script <!-- id: 20 -->
+    - [ ] Verify Security Requirements <!-- id: 21 -->
+    - [ ] Manual Verification Walkthrough <!-- id: 22 -->

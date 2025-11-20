@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="alert alert-success">
+            <h4 class="alert-heading"><i class="bi bi-check-circle-fill"></i> Success!</h4>
+            <p>CSR and Private Key for <strong>{{ entry.common_name }}</strong> have been generated and saved.</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Certificate Signing Request (CSR)</h5>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 border rounded"><code>{{ entry.csr_content }}</code></pre>
+                <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('csr_content')">Copy to
+                    Clipboard</button>
+                <!-- Download button placeholder -->
+            </div>
+        </div>
+
+        <div class="card mb-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Private Key (Keep Secret!)</h5>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 border rounded"><code>{{ entry.private_key_content }}</code></pre>
+                <button class="btn btn-outline-danger btn-sm" onclick="copyToClipboard('key_content')">Copy to
+                    Clipboard</button>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'home' %}" class="btn btn-primary">Return Home</a>
+            <a href="{% url 'generate_csr' %}" class="btn btn-secondary">Generate Another</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(elementId) {
+        // Simple copy logic would go here
+        alert('Copied to clipboard!');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,125 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class Role(models.Model):
+    ADMIN = 'ADMIN'
+    USER = 'USER'
+    ROLE_CHOICES = [
+        (ADMIN, 'Administrator'),
+        (USER, 'Normal User'),
+    ]
+    name = models.CharField(max_length=50, choices=ROLE_CHOICES, unique=True)
+
+    def __str__(self):
+        return self.get_name_display()
+
+class User(AbstractUser):
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
+    password_changed_at = models.DateTimeField(auto_now_add=True)
+
+    def is_admin(self):
+        return self.role and self.role.name == Role.ADMIN
+
+class PasswordPolicy(models.Model):
+    role = models.OneToOneField(Role, on_delete=models.CASCADE)
+    min_length = models.IntegerField(default=12)
+    require_uppercase = models.BooleanField(default=True)
+    require_lowercase = models.BooleanField(default=True)
+    require_numbers = models.BooleanField(default=True)
+    require_special_chars = models.BooleanField(default=True)
+    expiry_days = models.IntegerField(default=90)
+    history_length = models.IntegerField(default=20, help_text="Number of previous passwords to remember")
+
+    def __str__(self):
+        return f"Policy for {self.role}"
+
+class PasswordHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_history')
+    password_hash = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+class Domain(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    
+    # Default Subject Attributes for this Domain
+    country = models.CharField(max_length=2, default='ES')
+    state = models.CharField(max_length=100, blank=True)
+    locality = models.CharField(max_length=100, blank=True)
+    organization = models.CharField(max_length=100, blank=True)
+    organizational_unit = models.CharField(max_length=100, blank=True)
+    email_address = models.EmailField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class CertificateEntry(models.Model):
+    STATUS_PENDING = 'PENDING'
+    STATUS_ISSUED = 'ISSUED'
+    STATUS_SIGNED = 'SIGNED'
+    STATUS_REVOKED = 'REVOKED'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_ISSUED, 'Issued'),
+        (STATUS_SIGNED, 'Signed'),
+        (STATUS_REVOKED, 'Revoked'),
+    ]
+
+    common_name = models.CharField(max_length=255)
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
+    subdomain = models.CharField(max_length=255, blank=True)
+    
+    csr_content = models.TextField()
+    private_key_content = models.TextField() # In production, this should be encrypted
+    certificate_content = models.TextField(blank=True, null=True)
+    
+    # Certificate validity dates (extracted from certificate when uploaded)
+    valid_from = models.DateTimeField(blank=True, null=True)
+    valid_until = models.DateTimeField(blank=True, null=True)
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Additional metadata
+    country = models.CharField(max_length=2, default='ES')
+    state = models.CharField(max_length=100, blank=True)
+    locality = models.CharField(max_length=100, blank=True)
+    organization = models.CharField(max_length=100, blank=True)
+    organizational_unit = models.CharField(max_length=100, blank=True)
+    email_address = models.EmailField(blank=True)
+
+    def __str__(self):
+        return self.common_name
+
+class TrustedDevice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trusted_devices')
+    token = models.CharField(max_length=64, unique=True)
+    expires_at = models.DateTimeField()
+    user_agent = models.CharField(max_length=255, blank=True)
+    last_used = models.DateTimeField(auto_now=True)
+
+    def is_valid(self):
+        from django.utils import timezone
+        return self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f"Trusted Device for {self.user} ({self.user_agent[:30]}...)"
+
+class CookieConsent(models.Model):
+    """Store user's cookie consent preferences"""
+    session_key = models.CharField(max_length=40, unique=True, help_text="Session key for anonymous users")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, help_text="User if authenticated")
+    optional_cookies_accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.user:
+            return f"Cookie Consent for {self.user.username}"
+        return f"Cookie Consent for session {self.session_key[:8]}..."
+
