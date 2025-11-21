@@ -64,10 +64,10 @@
         - [x] Generate Spanish (ES) .po file
         - [x] Translate all strings to Spanish
         - [x] Compile and test Spanish translation
-    - [ ] Add Portuguese Translation <!-- id: 28 -->
-        - [ ] Generate Portuguese (PT) .po file
-        - [ ] Translate all strings to Portuguese
-        - [ ] Compile and test Portuguese translation
+    - [x] Add Portuguese Translation <!-- id: 28 -->
+        - [x] Generate Portuguese (PT) .po file
+        - [x] Translate all strings to Portuguese
+        - [x] Compile and test Portuguese translation
     - [ ] Add French Translation <!-- id: 29 -->
         - [ ] Generate French (FR) .po file
         - [ ] Translate all strings to French
