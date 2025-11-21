@@ -68,18 +68,18 @@
         - [x] Generate Portuguese (PT) .po file
         - [x] Translate all strings to Portuguese
         - [x] Compile and test Portuguese translation
-    - [ ] Add French Translation <!-- id: 29 -->
-        - [ ] Generate French (FR) .po file
-        - [ ] Translate all strings to French
-        - [ ] Compile and test French translation
-    - [ ] Add German Translation <!-- id: 30 -->
-        - [ ] Generate German (DE) .po file
-        - [ ] Translate all strings to German
-        - [ ] Compile and test German translation
-    - [ ] Add Italian Translation <!-- id: 31 -->
-        - [ ] Generate Italian (IT) .po file
-        - [ ] Translate all strings to Italian
-        - [ ] Compile and test Italian translation
+    - [x] Add French Translation <!-- id: 29 -->
+        - [x] Generate French (FR) .po file
+        - [x] Translate all strings to French
+        - [x] Compile and test French translation
+    - [x] Add German Translation <!-- id: 30 -->
+        - [x] Generate German (DE) .po file
+        - [x] Translate all strings to German
+        - [x] Compile and test German translation
+    - [x] Add Italian Translation <!-- id: 31 -->
+        - [x] Generate Italian (IT) .po file
+        - [x] Translate all strings to Italian
+        - [x] Compile and test Italian translation
 - [ ] Verification & Deployment Prep
     - [ ] Create Installer Script <!-- id: 20 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->
