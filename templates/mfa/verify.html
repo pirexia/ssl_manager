@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-shield-check"></i> Two-Factor Authentication</h4>
+                <h4 class="mb-0"><i class="bi bi-shield-check"></i> {% trans "Two-Factor Authentication" %}</h4>
             </div>
             <div class="card-body">
-                <p class="text-muted">Enter the 6-digit code from your authenticator app</p>
+                <p class="text-muted">{% trans "Enter the 6-digit code from your authenticator app" %}</p>
 
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="token" class="form-label">Authentication Code:</label>
+                        <label for="token" class="form-label">{% trans "Authentication Code:" %}</label>
                         <input type="text" class="form-control form-control-lg text-center" id="token" name="token"
                             maxlength="6" pattern="[0-9]{6}" placeholder="000000" required autofocus>
                     </div>
@@ -22,22 +23,22 @@
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="trust_device" name="trust_device">
                         <label class="form-check-label" for="trust_device">
-                            Trust this device for 7 days
+                            {% trans "Trust this device for 7 days" %}
                         </label>
                     </div>
                     {% else %}
                     <div class="alert alert-warning mb-3">
                         <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Cookies not accepted:</strong> To use the "Trust this device" feature, you must accept
-                        optional cookies in the banner below.
+                        <strong>{% trans "Cookies not accepted:" %}</strong> {% trans "To use the \"Trust this device\"
+                        feature, you must accept optional cookies in the banner below." %}
                     </div>
                     {% endif %}
 
-                    <button type="submit" class="btn btn-primary w-100">Verify</button>
+                    <button type="submit" class="btn btn-primary w-100">{% trans "Verify" %}</button>
                 </form>
 
                 <div class="text-center mt-3">
-                    <a href="{% url 'logout' %}" class="text-muted">Cancel and logout</a>
+                    <a href="{% url 'logout' %}" class="text-muted">{% trans "Cancel and logout" %}</a>
                 </div>
             </div>
         </div>

@@ -1,37 +1,38 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Generate New CSR</h4>
+                <h4 class="mb-0">{% trans "Generate New CSR" %}</h4>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
 
-                    <h5 class="mb-3">Domain Information</h5>
+                    <h5 class="mb-3">{% trans "Domain Information" %}</h5>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Domain *</label>
+                            <label class="form-label">{% trans "Domain" %} *</label>
                             {{ form.domain }}
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Subdomain (App Name) *</label>
+                            <label class="form-label">{% trans "Subdomain (App Name)" %} *</label>
                             {{ form.subdomain }}
-                            <div class="form-text">e.g., 'app1' for app1.example.com</div>
+                            <div class="form-text">{% trans "e.g., 'app1' for app1.example.com" %}</div>
                         </div>
                     </div>
 
                     <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> Subject details (Country, Organization, etc.) will be
-                        automatically applied based on the selected domain configuration.
+                        <i class="bi bi-info-circle"></i> {% trans "Subject details (Country, Organization, etc.) will
+                        be automatically applied based on the selected domain configuration." %}
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success btn-lg">Generate CSR & Key</button>
-                        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success btn-lg">{% trans "Generate CSR & Key" %}</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
                     </div>
                 </form>
             </div>

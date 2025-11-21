@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-shield-lock"></i> Setup Two-Factor Authentication</h4>
+                <h4 class="mb-0"><i class="bi bi-shield-lock"></i> {% trans "Setup Two-Factor Authentication" %}</h4>
             </div>
             <div class="card-body">
-                <p class="text-muted">Scan this QR code with your authenticator app (Google Authenticator, Microsoft
-                    Authenticator, etc.)</p>
+                <p class="text-muted">{% trans "Scan this QR code with your authenticator app (Google Authenticator,
+                    Microsoft Authenticator, etc.)" %}</p>
 
                 <div class="text-center my-4">
                     <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="img-fluid"
@@ -17,18 +18,19 @@
                 </div>
 
                 <div class="alert alert-info">
-                    <strong>Manual Entry Key:</strong><br>
+                    <strong>{% trans "Manual Entry Key:" %}</strong><br>
                     <code>{{ secret_key }}</code>
                 </div>
 
                 <form method="post" action="{% url 'mfa_verify_setup' %}">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="token" class="form-label">Enter the 6-digit code from your app:</label>
+                        <label for="token" class="form-label">{% trans "Enter the 6-digit code from your app:"
+                            %}</label>
                         <input type="text" class="form-control" id="token" name="token" maxlength="6" pattern="[0-9]{6}"
                             required autofocus>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Verify and Enable MFA</button>
+                    <button type="submit" class="btn btn-primary w-100">{% trans "Verify and Enable MFA" %}</button>
                 </form>
             </div>
         </div>

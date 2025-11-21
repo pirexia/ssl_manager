@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -12,19 +13,20 @@
 
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0">Details</h5>
+                <h5 class="mb-0">{% trans "Details" %}</h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Domain:</strong> {{ entry.domain }}</p>
-                        <p><strong>Created By:</strong> {{ entry.created_by.username }}</p>
-                        <p><strong>Created At:</strong> {{ entry.created_at }}</p>
+                        <p><strong>{% trans "Domain:" %}</strong> {{ entry.domain }}</p>
+                        <p><strong>{% trans "Created By:" %}</strong> {{ entry.created_by.username }}</p>
+                        <p><strong>{% trans "Created At:" %}</strong> {{ entry.created_at }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Organization:</strong> {{ entry.organization }}</p>
-                        <p><strong>Unit:</strong> {{ entry.organizational_unit }}</p>
-                        <p><strong>Location:</strong> {{ entry.locality }}, {{ entry.state }}, {{ entry.country }}</p>
+                        <p><strong>{% trans "Organization:" %}</strong> {{ entry.organization }}</p>
+                        <p><strong>{% trans "Unit:" %}</strong> {{ entry.organizational_unit }}</p>
+                        <p><strong>{% trans "Location:" %}</strong> {{ entry.locality }}, {{ entry.state }}, {{
+                            entry.country }}</p>
                     </div>
                 </div>
             </div>
@@ -34,66 +36,83 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">CSR</h5>
                 <div>
-                    <a href="{% url 'download_file' entry.pk 'csr' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> Download .csr</a>
+                    <a href="{% url 'download_file' entry.pk 'csr' %}" class="btn btn-sm btn-outline-primary"><i
+                            class="bi bi-download"></i> {% trans "Download .csr" %}</a>
                 </div>
             </div>
             <div class="card-body">
-                <pre class="bg-light p-3 border rounded" style="max-height: 200px; overflow-y: auto;"><code>{{ entry.csr_content }}</code></pre>
+                <pre class="bg-light p-3 border rounded"
+                    style="max-height: 200px; overflow-y: auto;"><code>{{ entry.csr_content }}</code></pre>
             </div>
         </div>
 
         <div class="card mb-4 border-danger">
             <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Private Key</h5>
+                <h5 class="mb-0">{% trans "Private Key" %}</h5>
                 <div>
-                    <a href="{% url 'download_file' entry.pk 'key' %}" class="btn btn-sm btn-light text-danger"><i class="bi bi-download"></i> Download .key</a>
+                    <a href="{% url 'download_file' entry.pk 'key' %}" class="btn btn-sm btn-light text-danger"><i
+                            class="bi bi-download"></i> {% trans "Download .key" %}</a>
                 </div>
             </div>
             <div class="card-body">
-                <pre class="bg-light p-3 border rounded" style="max-height: 200px; overflow-y: auto;"><code>{{ entry.private_key_content }}</code></pre>
+                <pre class="bg-light p-3 border rounded"
+                    style="max-height: 200px; overflow-y: auto;"><code>{{ entry.private_key_content }}</code></pre>
             </div>
         </div>
 
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Iteration History for {{ entry.common_name }}</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> {% trans "Iteration History for" %} {{
+                    entry.common_name }}</h5>
             </div>
             <div class="card-body p-0">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Generated</th>
-                            <th>Status</th>
-                            <th>Valid From</th>
-                            <th>Valid Until</th>
-                            <th>Created By</th>
-                            <th>Files</th>
+                            <th>{% trans "Generated" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            <th>{% trans "Valid From" %}</th>
+                            <th>{% trans "Valid Until" %}</th>
+                            <th>{% trans "Created By" %}</th>
+                            <th>{% trans "Files" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for iteration in iterations %}
-                        <tr {% if iteration.pk == entry.pk %}class="table-primary"{% endif %}>
+                        <tr {% if iteration.pk==entry.pk %}class="table-primary" {% endif %}>
                             <td>{{ iteration.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td><span class="badge bg-secondary">{{ iteration.get_status_display }}</span></td>
-                            <td>{% if iteration.valid_from %}{{ iteration.valid_from|date:"Y-m-d" }}{% else %}-{% endif %}</td>
-                            <td>{% if iteration.valid_until %}{{ iteration.valid_until|date:"Y-m-d" }}{% else %}-{% endif %}</td>
+                            <td>{% if iteration.valid_from %}{{ iteration.valid_from|date:"Y-m-d" }}{% else %}-{% endif
+                                %}</td>
+                            <td>{% if iteration.valid_until %}{{ iteration.valid_until|date:"Y-m-d" }}{% else %}-{%
+                                endif %}</td>
                             <td>{{ iteration.created_by.username }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{% url 'download_file' iteration.pk 'csr' %}" class="btn btn-outline-primary" title="Download CSR">CSR</a>
-                                    <a href="{% url 'download_file' iteration.pk 'key' %}" class="btn btn-outline-danger" title="Download Private Key">Key</a>
+                                    <a href="{% url 'download_file' iteration.pk 'csr' %}"
+                                        class="btn btn-outline-primary" title="Download CSR">CSR</a>
+                                    <a href="{% url 'download_file' iteration.pk 'key' %}"
+                                        class="btn btn-outline-danger" title="Download Private Key">Key</a>
                                     {% if not iteration.certificate_content %}
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal{{ iteration.pk }}" title="Upload Certificate"><i class="bi bi-upload"></i> Upload</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#uploadModal{{ iteration.pk }}"
+                                        title="{% trans 'Upload Certificate' %}"><i class="bi bi-upload"></i> {% trans
+                                        "Upload" %}</button>
                                     {% else %}
-                                    <a href="{% url 'download_certificate' iteration.pk 'crt' %}" class="btn btn-success" title="Download as CRT">CRT</a>
-                                    <a href="{% url 'download_certificate' iteration.pk 'cer' %}" class="btn btn-success" title="Download as CER">CER</a>
-                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pfxModal{{ iteration.pk }}" title="Download as PFX">PFX</button>
+                                    <a href="{% url 'download_certificate' iteration.pk 'crt' %}"
+                                        class="btn btn-success" title="Download as CRT">CRT</a>
+                                    <a href="{% url 'download_certificate' iteration.pk 'cer' %}"
+                                        class="btn btn-success" title="Download as CER">CER</a>
+                                    <button class="btn btn-success" data-bs-toggle="modal"
+                                        data-bs-target="#pfxModal{{ iteration.pk }}"
+                                        title="Download as PFX">PFX</button>
                                     {% endif %}
                                 </div>
                                 {% if iteration.pk == entry.pk %}
-                                <span class="badge bg-info ms-2">Current</span>
+                                <span class="badge bg-info ms-2">{% trans "Current" %}</span>
                                 {% else %}
-                                <a href="{% url 'certificate_detail' iteration.pk %}" class="btn btn-sm btn-outline-secondary ms-2">View</a>
+                                <a href="{% url 'certificate_detail' iteration.pk %}"
+                                    class="btn btn-sm btn-outline-secondary ms-2">{% trans "View" %}</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -109,25 +128,30 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Upload Certificate</h5>
+                        <h5 class="modal-title">{% trans "Upload Certificate" %}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form method="post" action="{% url 'upload_certificate' iteration.pk %}" enctype="multipart/form-data">
+                    <form method="post" action="{% url 'upload_certificate' iteration.pk %}"
+                        enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="modal-body">
-                            <p><strong>Common Name:</strong> {{ iteration.common_name }}</p>
-                            <p><strong>Created:</strong> {{ iteration.created_at|date:"Y-m-d H:i:s" }}</p>
+                            <p><strong>{% trans "Common Name:" %}</strong> {{ iteration.common_name }}</p>
+                            <p><strong>{% trans "Created:" %}</strong> {{ iteration.created_at|date:"Y-m-d H:i:s" }}</p>
                             <hr>
                             <div class="mb-3">
-                                <label for="certificate_file_{{ iteration.pk }}" class="form-label">Certificate File</label>
-                                <input type="file" class="form-control" id="certificate_file_{{ iteration.pk }}" name="certificate_file" accept=".crt,.cer,.pem" required>
-                                <div class="form-text">Accepted formats: .crt, .cer, .pem</div>
+                                <label for="certificate_file_{{ iteration.pk }}" class="form-label">{% trans
+                                    "Certificate File" %}</label>
+                                <input type="file" class="form-control" id="certificate_file_{{ iteration.pk }}"
+                                    name="certificate_file" accept=".crt,.cer,.pem" required>
+                                <div class="form-text">{% trans "Accepted formats: .crt, .cer, .pem" %}</div>
                             </div>
-                            <div class="alert alert-info"><i class="bi bi-info-circle"></i> The certificate will be validated against the CSR to ensure it matches.</div>
+                            <div class="alert alert-info"><i class="bi bi-info-circle"></i> {% trans "The certificate
+                                will be validated against the CSR to ensure it matches." %}</div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Upload Certificate</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel"
+                                %}</button>
+                            <button type="submit" class="btn btn-primary">{% trans "Upload Certificate" %}</button>
                         </div>
                     </form>
                 </div>
@@ -142,23 +166,31 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Download PFX</h5>
+                        <h5 class="modal-title">{% trans "Download PFX" %}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <form method="post" action="{% url 'download_certificate' iteration.pk 'pfx' %}">
                         {% csrf_token %}
                         <div class="modal-body">
-                            <p>The PFX file will contain both the certificate and private key, protected by a password.</p>
+                            <p>{% trans "The PFX file will contain both the certificate and private key, protected by a
+                                password." %}
+                            </p>
                             <div class="mb-3">
-                                <label for="pfx_password_{{ iteration.pk }}" class="form-label">PFX Password</label>
-                                <input type="password" class="form-control" id="pfx_password_{{ iteration.pk }}" name="pfx_password" required minlength="4">
-                                <div class="form-text">Enter a password to protect the PFX file (minimum 4 characters)</div>
+                                <label for="pfx_password_{{ iteration.pk }}" class="form-label">{% trans "PFX Password"
+                                    %}</label>
+                                <input type="password" class="form-control" id="pfx_password_{{ iteration.pk }}"
+                                    name="pfx_password" required minlength="4">
+                                <div class="form-text">{% trans "Enter a password to protect the PFX file (minimum 4
+                                    characters)" %}
+                                </div>
                             </div>
-                            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Remember this password! You'll need it to import the PFX file.</div>
+                            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> {% trans
+                                "Remember this password! You'll need it to import the PFX file." %}</div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-success">Download PFX</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel"
+                                %}</button>
+                            <button type="submit" class="btn btn-success">{% trans "Download PFX" %}</button>
                         </div>
                     </form>
                 </div>
@@ -168,7 +200,7 @@
         {% endfor %}
 
         <div class="text-center mb-5">
-            <a href="{% url 'search_certificates' %}" class="btn btn-secondary">Back to Search</a>
+            <a href="{% url 'search_certificates' %}" class="btn btn-secondary">{% trans "Back to Search" %}</a>
         </div>
     </div>
 </div>

@@ -3,10 +3,11 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import Domain, CertificateEntry
 from .validators import validate_password_complexity, validate_password_history
 from cryptography import x509
+from django.utils.translation import gettext_lazy as _
 
 class CSRGenerationForm(forms.ModelForm):
-    domain = forms.ModelChoiceField(queryset=Domain.objects.all(), empty_label="Select Domain", widget=forms.Select(attrs={'class': 'form-select'}))
-    subdomain = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. app1'}))
+    domain = forms.ModelChoiceField(queryset=Domain.objects.all(), empty_label=_("Select Domain"), widget=forms.Select(attrs={'class': 'form-select'}))
+    subdomain = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. app1')}))
     
     class Meta:
         model = CertificateEntry
@@ -14,8 +15,8 @@ class CSRGenerationForm(forms.ModelForm):
 
 class CertificateUploadForm(forms.Form):
     certificate_file = forms.FileField(
-        label='Certificate File',
-        help_text='Upload certificate (.crt, .cer, .pem)',
+        label=_('Certificate File'),
+        help_text=_('Upload certificate (.crt, .cer, .pem)'),
         widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.crt,.cer,.pem'})
     )
     

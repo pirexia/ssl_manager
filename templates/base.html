@@ -43,23 +43,24 @@
                 {% trans "SSL Manager" %}</a>
             <div class="d-flex align-items-center">
                 <!-- Language Selector -->
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as languages %}
+                {% get_language_info_list for languages as languages %}
                 <div class="dropdown me-3">
                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
                         data-bs-toggle="dropdown">
                         <i class="bi bi-globe"></i> {{ LANGUAGE_CODE|upper }}
                     </button>
                     <ul class="dropdown-menu">
-                        {% get_available_languages as languages %}
-                        {% get_current_language as LANGUAGE_CODE %}
-                        {% for lang_code, lang_name in languages %}
+                        {% for language in languages %}
                         <li>
                             <form action="{% url 'set_language' %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                                <input name="language" type="hidden" value="{{ lang_code }}">
+                                <input name="language" type="hidden" value="{{ language.code }}">
                                 <button type="submit"
-                                    class="dropdown-item {% if lang_code == LANGUAGE_CODE %}active{% endif %}">
-                                    {{ lang_name }}
+                                    class="dropdown-item {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                                    {{ language.name_local }} ({{ language.code|upper }})
                                 </button>
                             </form>
                         </li>

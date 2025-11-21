@@ -457,3 +457,77 @@ def get_cookie_consent(request):
         return consent.optional_cookies_accepted
     except CookieConsent.DoesNotExist:
         return None
+
+# Language Preference
+from django.utils import translation
+from django.utils.translation import check_for_language
+from django.urls import translate_url, resolve, reverse
+from django.shortcuts import redirect
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from urllib.parse import urlparse
+
+def set_language(request):
+    """
+    Custom set_language view that:
+    1. Saves preference to database for authenticated users
+    2. Sets the django_language cookie and session
+    3. Redirects to the URL with the correct language prefix
+    """
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    response = HttpResponseRedirect(next_url)
+    
+    if request.method == 'POST':
+        lang_code = request.POST.get('language')
+        
+        if lang_code and check_for_language(lang_code):
+            # 1. Save to database for authenticated users
+            if request.user.is_authenticated:
+                request.user.preferred_language = lang_code
+                request.user.save(update_fields=['preferred_language'])
+            
+            # 2. Calculate new URL with prefix
+            try:
+                # Parse URL to get path
+                parsed = urlparse(next_url)
+                path = parsed.path
+                
+                # Resolve current view
+                match = resolve(path)
+                
+                # Reverse with new language
+                with translation.override(lang_code):
+                    if match.namespaces:
+                        view_name = f"{':'.join(match.namespaces)}:{match.url_name}"
+                    else:
+                        view_name = match.url_name
+                    
+                    new_url = reverse(view_name, args=match.args, kwargs=match.kwargs)
+                    
+                    # Preserve query parameters
+                    if parsed.query:
+                        new_url += f"?{parsed.query}"
+                        
+                    response = HttpResponseRedirect(new_url)
+            except Exception:
+                # Fallback to translate_url or original url
+                new_url = translate_url(next_url, lang_code)
+                if new_url:
+                    response = HttpResponseRedirect(new_url)
+            
+            # 3. Set session language
+            if hasattr(request, 'session'):
+                request.session['_language'] = lang_code
+            
+            # 4. Set language cookie
+            response.set_cookie(
+                settings.LANGUAGE_COOKIE_NAME, lang_code,
+                max_age=settings.LANGUAGE_COOKIE_AGE,
+                path=settings.LANGUAGE_COOKIE_PATH,
+                domain=settings.LANGUAGE_COOKIE_DOMAIN,
+                secure=settings.LANGUAGE_COOKIE_SECURE,
+                httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+                samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+            )
+            
+    return response

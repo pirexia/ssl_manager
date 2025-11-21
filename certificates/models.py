@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 
 class Role(models.Model):
     ADMIN = 'ADMIN'
     USER = 'USER'
     ROLE_CHOICES = [
-        (ADMIN, 'Administrator'),
-        (USER, 'Normal User'),
+        (ADMIN, _('Administrator')),
+        (USER, _('Normal User')),
     ]
     name = models.CharField(max_length=50, choices=ROLE_CHOICES, unique=True)
 
@@ -16,6 +17,18 @@ class Role(models.Model):
 class User(AbstractUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
     password_changed_at = models.DateTimeField(auto_now_add=True)
+    preferred_language = models.CharField(
+        max_length=10,
+        default='en',
+        choices=[
+            ('en', 'English'),
+            ('es', 'Español'),
+            ('pt', 'Português'),
+            ('fr', 'Français'),
+            ('de', 'Deutsch'),
+            ('it', 'Italiano'),
+        ]
+    )
 
     def is_admin(self):
         return self.role and self.role.name == Role.ADMIN
@@ -28,7 +41,7 @@ class PasswordPolicy(models.Model):
     require_numbers = models.BooleanField(default=True)
     require_special_chars = models.BooleanField(default=True)
     expiry_days = models.IntegerField(default=90)
-    history_length = models.IntegerField(default=20, help_text="Number of previous passwords to remember")
+    history_length = models.IntegerField(default=20, help_text=_("Number of previous passwords to remember"))
 
     def __str__(self):
         return f"Policy for {self.role}"
@@ -63,10 +76,10 @@ class CertificateEntry(models.Model):
     STATUS_SIGNED = 'SIGNED'
     STATUS_REVOKED = 'REVOKED'
     STATUS_CHOICES = [
-        (STATUS_PENDING, 'Pending'),
-        (STATUS_ISSUED, 'Issued'),
-        (STATUS_SIGNED, 'Signed'),
-        (STATUS_REVOKED, 'Revoked'),
+        (STATUS_PENDING, _('Pending')),
+        (STATUS_ISSUED, _('Issued')),
+        (STATUS_SIGNED, _('Signed')),
+        (STATUS_REVOKED, _('Revoked')),
     ]
 
     common_name = models.CharField(max_length=255)
@@ -112,8 +125,8 @@ class TrustedDevice(models.Model):
 
 class CookieConsent(models.Model):
     """Store user's cookie consent preferences"""
-    session_key = models.CharField(max_length=40, unique=True, help_text="Session key for anonymous users")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, help_text="User if authenticated")
+    session_key = models.CharField(max_length=40, unique=True, help_text=_("Session key for anonymous users"))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, help_text=_("User if authenticated"))
     optional_cookies_accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

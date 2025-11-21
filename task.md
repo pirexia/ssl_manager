@@ -51,12 +51,35 @@
         - [x] Store user consent preference
         - [x] Disable Trusted Device feature if cookies not accepted
         - [x] Show warning in MFA page if cookies disabled
-    - [ ] Implement Internationalization (i18n) <!-- id: 25 -->
-        - [ ] Configure Django i18n settings
-        - [ ] Mark all strings for translation
-        - [ ] Create translation files for ES, PT, FR, DE, IT
-        - [ ] Add language selector to navbar
-        - [ ] Translate all templates and messages
+    - [x] Implement Internationalization (i18n) Infrastructure <!-- id: 25 -->
+        - [x] Configure Django i18n settings
+        - [x] Mark all strings for translation (using {% trans %} and {% blocktrans %})
+        - [x] Create initial translation files with current language (English)
+        - [x] Test translation system with English only
+    - [x] Add Language Selector <!-- id: 26 -->
+        - [x] Add language selector to navbar
+        - [x] Implement language switching logic
+        - [x] Store user language preference
+    - [x] Add Spanish Translation <!-- id: 27 -->
+        - [x] Generate Spanish (ES) .po file
+        - [x] Translate all strings to Spanish
+        - [x] Compile and test Spanish translation
+    - [ ] Add Portuguese Translation <!-- id: 28 -->
+        - [ ] Generate Portuguese (PT) .po file
+        - [ ] Translate all strings to Portuguese
+        - [ ] Compile and test Portuguese translation
+    - [ ] Add French Translation <!-- id: 29 -->
+        - [ ] Generate French (FR) .po file
+        - [ ] Translate all strings to French
+        - [ ] Compile and test French translation
+    - [ ] Add German Translation <!-- id: 30 -->
+        - [ ] Generate German (DE) .po file
+        - [ ] Translate all strings to German
+        - [ ] Compile and test German translation
+    - [ ] Add Italian Translation <!-- id: 31 -->
+        - [ ] Generate Italian (IT) .po file
+        - [ ] Translate all strings to Italian
+        - [ ] Compile and test Italian translation
 - [ ] Verification & Deployment Prep
     - [ ] Create Installer Script <!-- id: 20 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->
