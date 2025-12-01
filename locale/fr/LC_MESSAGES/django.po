@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-21 08:43+0100\n"
+"POT-Creation-Date: 2025-12-01 22:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,21 +74,44 @@ msgstr "Utilisateur si authentifié"
 msgid "SSL Manager"
 msgstr "Gestionnaire SSL"
 
-#: .\templates\base.html:86
+#: .\templates\base.html:76
+msgid "MFA Setup"
+msgstr "Configuration MFA"
+
+#: .\templates\base.html:77 .\templates\password_change.html:9
+#: .\templates\password_change.html:41
+msgid "Change Password"
+msgstr "Changer le mot de passe"
+
+#: .\templates\base.html:84
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: .\templates\base.html:93
+#: .\templates\base.html:91
 msgid "Administration"
 msgstr "Administration"
 
-#: .\templates\base.html:96 .\templates\login.html:9
+#: .\templates\base.html:94 .\templates\login.html:9
 msgid "Login"
 msgstr "Connexion"
 
-#: .\templates\base.html:123
+#: .\templates\base.html:119
+msgid ""
+"This website uses essential cookies for authentication and optional cookies "
+"to remember your trusted devices."
+msgstr ""
+
+#: .\templates\base.html:120
 msgid "Learn more"
 msgstr "En savoir plus"
+
+#: .\templates\base.html:124
+msgid "Reject Optional"
+msgstr ""
+
+#: .\templates\base.html:125
+msgid "Accept All"
+msgstr ""
 
 #: .\templates\certificate_detail.html:16
 msgid "Details"
@@ -138,7 +161,7 @@ msgstr "Historique des itérations pour"
 msgid "Generated"
 msgstr "Généré"
 
-#: .\templates\certificate_detail.html:73 .\templates\search.html:64
+#: .\templates\certificate_detail.html:73 .\templates\search.html:52
 msgid "Status"
 msgstr "Statut"
 
@@ -150,7 +173,7 @@ msgstr "Valide du"
 msgid "Valid Until"
 msgstr "Valide jusqu'au"
 
-#: .\templates\certificate_detail.html:76 .\templates\search.html:69
+#: .\templates\certificate_detail.html:76 .\templates\search.html:57
 msgid "Created By"
 msgstr "Créé par"
 
@@ -168,7 +191,7 @@ msgstr "Télécharger le certificat"
 msgid "Current"
 msgstr "Actuel"
 
-#: .\templates\certificate_detail.html:115
+#: .\templates\certificate_detail.html:115 .\templates\search.html:71
 msgid "View"
 msgstr "Voir"
 
@@ -185,11 +208,11 @@ msgid "Accepted formats: .crt, .cer, .pem"
 msgstr "Formats acceptés : .crt, .cer, .pem"
 
 #: .\templates\certificate_detail.html:169
-#: .\templates\certificate_detail.html:193
+#: .\templates\certificate_detail.html:191
 msgid "Download PFX"
 msgstr "Télécharger PFX"
 
-#: .\templates\certificate_detail.html:203
+#: .\templates\certificate_detail.html:201
 msgid "Back to Search"
 msgstr "Retour à la recherche"
 
@@ -225,7 +248,7 @@ msgstr "Générer un nouveau CSR"
 msgid "Domain Information"
 msgstr "Informations sur le domaine"
 
-#: .\templates\generate_csr.html:18 .\templates\search.html:63
+#: .\templates\generate_csr.html:18 .\templates\search.html:51
 msgid "Domain"
 msgstr "Domaine"
 
@@ -237,11 +260,17 @@ msgstr "Sous-domaine (Nom de l'application)"
 msgid "e.g., 'app1' for app1.example.com"
 msgstr "ex., 'app1' pour app1.example.com"
 
-#: .\templates\generate_csr.html:34
+#: .\templates\generate_csr.html:29
+msgid ""
+"Subject details (Country, Organization, etc.) will be automatically applied "
+"based on the selected domain configuration."
+msgstr "Les détails du sujet (Pays, Organisation, etc.) seront automatiquement appliqués en fonction de la configuration du domaine sélectionné."
+
+#: .\templates\generate_csr.html:33
 msgid "Generate CSR & Key"
 msgstr "Générer CSR et Clé"
 
-#: .\templates\generate_csr.html:35 .\templates\password_change.html:42
+#: .\templates\generate_csr.html:34 .\templates\password_change.html:42
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -313,10 +342,6 @@ msgstr "Vérifier"
 msgid "Cancel and logout"
 msgstr "Annuler et se déconnecter"
 
-#: .\templates\password_change.html:9 .\templates\password_change.html:41
-msgid "Change Password"
-msgstr "Changer le mot de passe"
-
 #: .\templates\password_change.html:13
 msgid "Password Requirements:"
 msgstr "Exigences du mot de passe :"
@@ -327,7 +352,9 @@ msgstr "Minimum 12 caractères (16 pour les administrateurs)"
 
 #: .\templates\password_change.html:16
 msgid "Must contain uppercase, lowercase, numbers, and special characters"
-msgstr "Doit contenir des majuscules, des minuscules, des chiffres et des caractères spéciaux"
+msgstr ""
+"Doit contenir des majuscules, des minuscules, des chiffres et des caractères "
+"spéciaux"
 
 #: .\templates\password_change.html:17
 msgid "Cannot reuse any of your last 20 passwords"
@@ -341,45 +368,51 @@ msgstr "Expire tous les 90 jours"
 msgid "Search by Common Name (live search)"
 msgstr "Rechercher par nom commun (recherche en direct)"
 
-#: .\templates\search.html:18
-msgid "Hold Ctrl for multiple domains"
-msgstr "Maintenez Ctrl pour plusieurs domaines"
-
-#: .\templates\search.html:26
+#: .\templates\search.html:20
 msgid "All"
 msgstr "Tout"
 
-#: .\templates\search.html:33
+#: .\templates\search.html:23
 msgid "Expiring in 1 Month"
 msgstr "Expire dans 1 mois"
 
-#: .\templates\search.html:42
+#: .\templates\search.html:32
 msgid "Show"
 msgstr "Montrer"
 
-#: .\templates\search.html:49
+#: .\templates\search.html:39
 msgid "entries"
 msgstr "entrées"
 
-#: .\templates\search.html:61
+#: .\templates\search.html:43
+#, python-format
+msgid "Showing %(start)s to %(end)s of %(total)s entries"
+msgstr ""
+
+#: .\templates\search.html:49
 msgid "Common Name"
 msgstr "Nom commun"
 
-#: .\templates\search.html:65
+#: .\templates\search.html:53
 msgid "Created"
 msgstr "Créé"
 
-#: .\templates\search.html:67
+#: .\templates\search.html:55
 msgid "Expires"
 msgstr "Expire"
 
-#: .\templates\search.html:70
+#: .\templates\search.html:58
 msgid "Actions"
 msgstr "Actions"
 
-#: .\templates\search.html:88
+#: .\templates\search.html:75
 msgid "No certificates found."
 msgstr "Aucun certificat trouvé."
+
+#: .\templates\search.html:91
+#, python-format
+msgid "Page %(current)s of %(total)s"
+msgstr ""
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
@@ -1604,3 +1637,6 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Hold Ctrl for multiple domains"
+#~ msgstr "Maintenez Ctrl pour plusieurs domaines"

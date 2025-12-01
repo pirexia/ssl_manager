@@ -80,6 +80,15 @@
         - [x] Generate Italian (IT) .po file
         - [x] Translate all strings to Italian
         - [x] Compile and test Italian translation
+    - [/] Implement Internal CA for Certificate Generation <!-- id: 32 -->
+        - [ ] Create InternalCA model (single global CA)
+        - [ ] Add CA generation utilities (root + intermediate)
+        - [ ] Add is_internal field to CertificateEntry
+        - [ ] Implement generate_internal_certificate view
+        - [ ] Add "Generate Internal" button in certificate detail
+        - [ ] Add bundle download support for internal certs
+        - [ ] Create database migration
+        - [ ] Test CA generation and certificate signing
 - [ ] Verification & Deployment Prep
     - [ ] Create Installer Script <!-- id: 20 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->

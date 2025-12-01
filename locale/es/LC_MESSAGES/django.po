@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-20 22:42+0100\n"
+"POT-Creation-Date: 2025-12-01 22:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,21 +74,44 @@ msgstr "Usuario si está autenticado"
 msgid "SSL Manager"
 msgstr "Gestor SSL"
 
-#: .\templates\base.html:86
+#: .\templates\base.html:76
+msgid "MFA Setup"
+msgstr "Configuración MFA"
+
+#: .\templates\base.html:77 .\templates\password_change.html:9
+#: .\templates\password_change.html:41
+msgid "Change Password"
+msgstr "Cambiar Contraseña"
+
+#: .\templates\base.html:84
 msgid "Logout"
 msgstr "Cerrar Sesión"
 
-#: .\templates\base.html:93
+#: .\templates\base.html:91
 msgid "Administration"
 msgstr "Administración"
 
-#: .\templates\base.html:96 .\templates\login.html:9
+#: .\templates\base.html:94 .\templates\login.html:9
 msgid "Login"
 msgstr "Iniciar Sesión"
 
-#: .\templates\base.html:123
+#: .\templates\base.html:119
+msgid ""
+"This website uses essential cookies for authentication and optional cookies "
+"to remember your trusted devices."
+msgstr ""
+
+#: .\templates\base.html:120
 msgid "Learn more"
 msgstr "Saber más"
+
+#: .\templates\base.html:124
+msgid "Reject Optional"
+msgstr ""
+
+#: .\templates\base.html:125
+msgid "Accept All"
+msgstr ""
 
 #: .\templates\certificate_detail.html:16
 msgid "Details"
@@ -139,7 +161,7 @@ msgstr "Historial de Iteraciones para"
 msgid "Generated"
 msgstr "Generado"
 
-#: .\templates\certificate_detail.html:73 .\templates\search.html:64
+#: .\templates\certificate_detail.html:73 .\templates\search.html:52
 msgid "Status"
 msgstr "Estado"
 
@@ -151,7 +173,7 @@ msgstr "Válido Desde"
 msgid "Valid Until"
 msgstr "Válido Hasta"
 
-#: .\templates\certificate_detail.html:76 .\templates\search.html:69
+#: .\templates\certificate_detail.html:76 .\templates\search.html:57
 msgid "Created By"
 msgstr "Creado Por"
 
@@ -169,7 +191,7 @@ msgstr "Subir Certificado"
 msgid "Current"
 msgstr "Actual"
 
-#: .\templates\certificate_detail.html:115
+#: .\templates\certificate_detail.html:115 .\templates\search.html:71
 msgid "View"
 msgstr "Ver"
 
@@ -186,11 +208,11 @@ msgid "Accepted formats: .crt, .cer, .pem"
 msgstr "Formatos aceptados: .crt, .cer, .pem"
 
 #: .\templates\certificate_detail.html:169
-#: .\templates\certificate_detail.html:193
+#: .\templates\certificate_detail.html:191
 msgid "Download PFX"
 msgstr "Descargar PFX"
 
-#: .\templates\certificate_detail.html:203
+#: .\templates\certificate_detail.html:201
 msgid "Back to Search"
 msgstr "Volver a la Búsqueda"
 
@@ -226,7 +248,7 @@ msgstr "Generar Nuevo CSR"
 msgid "Domain Information"
 msgstr "Información del Dominio"
 
-#: .\templates\generate_csr.html:18 .\templates\search.html:63
+#: .\templates\generate_csr.html:18 .\templates\search.html:51
 msgid "Domain"
 msgstr "Dominio"
 
@@ -238,11 +260,17 @@ msgstr "Subdominio (Nombre de la App)"
 msgid "e.g., 'app1' for app1.example.com"
 msgstr "ej., 'app1' para app1.example.com"
 
-#: .\templates\generate_csr.html:34
+#: .\templates\generate_csr.html:29
+msgid ""
+"Subject details (Country, Organization, etc.) will be automatically applied "
+"based on the selected domain configuration."
+msgstr "Los detalles del sujeto (País, Organización, etc.) se aplicarán automáticamente según la configuración del dominio seleccionado."
+
+#: .\templates\generate_csr.html:33
 msgid "Generate CSR & Key"
 msgstr "Generar CSR y Clave"
 
-#: .\templates\generate_csr.html:35 .\templates\password_change.html:42
+#: .\templates\generate_csr.html:34 .\templates\password_change.html:42
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -314,10 +342,6 @@ msgstr "Verificar"
 msgid "Cancel and logout"
 msgstr "Cancelar y cerrar sesión"
 
-#: .\templates\password_change.html:9 .\templates\password_change.html:41
-msgid "Change Password"
-msgstr "Cambiar Contraseña"
-
 #: .\templates\password_change.html:13
 msgid "Password Requirements:"
 msgstr "Requisitos de Contraseña:"
@@ -342,45 +366,51 @@ msgstr "Caduca cada 90 días"
 msgid "Search by Common Name (live search)"
 msgstr "Buscar por Nombre Común (búsqueda en vivo)"
 
-#: .\templates\search.html:18
-msgid "Hold Ctrl for multiple domains"
-msgstr "Mantenga Ctrl para múltiples dominios"
-
-#: .\templates\search.html:26
+#: .\templates\search.html:20
 msgid "All"
 msgstr "Todos"
 
-#: .\templates\search.html:33
+#: .\templates\search.html:23
 msgid "Expiring in 1 Month"
 msgstr "Caduca en 1 Mes"
 
-#: .\templates\search.html:42
+#: .\templates\search.html:32
 msgid "Show"
 msgstr "Mostrar"
 
-#: .\templates\search.html:49
+#: .\templates\search.html:39
 msgid "entries"
 msgstr "entradas"
 
-#: .\templates\search.html:61
+#: .\templates\search.html:43
+#, python-format
+msgid "Showing %(start)s to %(end)s of %(total)s entries"
+msgstr ""
+
+#: .\templates\search.html:49
 msgid "Common Name"
 msgstr "Nombre Común"
 
-#: .\templates\search.html:65
+#: .\templates\search.html:53
 msgid "Created"
 msgstr "Creado"
 
-#: .\templates\search.html:67
+#: .\templates\search.html:55
 msgid "Expires"
 msgstr "Caduca"
 
-#: .\templates\search.html:70
+#: .\templates\search.html:58
 msgid "Actions"
 msgstr "Acciones"
 
-#: .\templates\search.html:88
+#: .\templates\search.html:75
 msgid "No certificates found."
 msgstr "No se encontraron certificados."
+
+#: .\templates\search.html:91
+#, python-format
+msgid "Page %(current)s of %(total)s"
+msgstr ""
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
@@ -1605,3 +1635,6 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Hold Ctrl for multiple domains"
+#~ msgstr "Mantenga Ctrl para múltiples dominios"

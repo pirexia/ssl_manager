@@ -6,8 +6,7 @@
     <div class="col-md-10">
         <div class="alert alert-success">
             <h4 class="alert-heading"><i class="bi bi-check-circle-fill"></i> {% trans "Success!" %}</h4>
-            <p>{% trans "CSR and Private Key for" %} <strong>{{ entry.common_name }}</strong> {% trans "have been
-                generated and saved." %}</p>
+            <p>{% trans "CSR and Private Key for" %} <strong>{{ entry.common_name }}</strong> {% trans "have been generated and saved." %}</p>
         </div>
 
         <div class="card mb-4">
@@ -16,8 +15,7 @@
             </div>
             <div class="card-body">
                 <pre class="bg-light p-3 border rounded"><code>{{ entry.csr_content }}</code></pre>
-                <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('csr_content')">{% trans "Copy
-                    to Clipboard" %}</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('csr_content')">{% trans "Copy to Clipboard" %}</button>
                 <!-- Download button placeholder -->
             </div>
         </div>
@@ -28,8 +26,7 @@
             </div>
             <div class="card-body">
                 <pre class="bg-light p-3 border rounded"><code>{{ entry.private_key_content }}</code></pre>
-                <button class="btn btn-outline-danger btn-sm" onclick="copyToClipboard('key_content')">{% trans "Copy to
-                    Clipboard" %}</button>
+                <button class="btn btn-outline-danger btn-sm" onclick="copyToClipboard('key_content')">{% trans "Copy to Clipboard" %}</button>
             </div>
         </div>
 

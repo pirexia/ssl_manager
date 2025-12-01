@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-21 15:51+0100\n"
+"POT-Creation-Date: 2025-12-01 22:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,21 +73,44 @@ msgstr "Benutzer wenn authentifiziert"
 msgid "SSL Manager"
 msgstr "SSL-Manager"
 
-#: .\templates\base.html:86
+#: .\templates\base.html:76
+msgid "MFA Setup"
+msgstr "MFA-Einrichtung"
+
+#: .\templates\base.html:77 .\templates\password_change.html:9
+#: .\templates\password_change.html:41
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+#: .\templates\base.html:84
 msgid "Logout"
 msgstr "Abmelden"
 
-#: .\templates\base.html:93
+#: .\templates\base.html:91
 msgid "Administration"
 msgstr "Verwaltung"
 
-#: .\templates\base.html:96 .\templates\login.html:9
+#: .\templates\base.html:94 .\templates\login.html:9
 msgid "Login"
 msgstr "Anmelden"
 
-#: .\templates\base.html:123
+#: .\templates\base.html:119
+msgid ""
+"This website uses essential cookies for authentication and optional cookies "
+"to remember your trusted devices."
+msgstr ""
+
+#: .\templates\base.html:120
 msgid "Learn more"
 msgstr "Mehr erfahren"
+
+#: .\templates\base.html:124
+msgid "Reject Optional"
+msgstr ""
+
+#: .\templates\base.html:125
+msgid "Accept All"
+msgstr ""
 
 #: .\templates\certificate_detail.html:16
 msgid "Details"
@@ -137,7 +160,7 @@ msgstr "Iterationsverlauf für"
 msgid "Generated"
 msgstr "Generiert"
 
-#: .\templates\certificate_detail.html:73 .\templates\search.html:64
+#: .\templates\certificate_detail.html:73 .\templates\search.html:52
 msgid "Status"
 msgstr "Status"
 
@@ -149,7 +172,7 @@ msgstr "Gültig ab"
 msgid "Valid Until"
 msgstr "Gültig bis"
 
-#: .\templates\certificate_detail.html:76 .\templates\search.html:69
+#: .\templates\certificate_detail.html:76 .\templates\search.html:57
 msgid "Created By"
 msgstr "Erstellt von"
 
@@ -167,7 +190,7 @@ msgstr "Zertifikat hochladen"
 msgid "Current"
 msgstr "Aktuell"
 
-#: .\templates\certificate_detail.html:115
+#: .\templates\certificate_detail.html:115 .\templates\search.html:71
 msgid "View"
 msgstr "Ansehen"
 
@@ -184,11 +207,11 @@ msgid "Accepted formats: .crt, .cer, .pem"
 msgstr "Akzeptierte Formate: .crt, .cer, .pem"
 
 #: .\templates\certificate_detail.html:169
-#: .\templates\certificate_detail.html:193
+#: .\templates\certificate_detail.html:191
 msgid "Download PFX"
 msgstr "PFX herunterladen"
 
-#: .\templates\certificate_detail.html:203
+#: .\templates\certificate_detail.html:201
 msgid "Back to Search"
 msgstr "Zurück zur Suche"
 
@@ -224,7 +247,7 @@ msgstr "Neuen CSR generieren"
 msgid "Domain Information"
 msgstr "Domain-Informationen"
 
-#: .\templates\generate_csr.html:18 .\templates\search.html:63
+#: .\templates\generate_csr.html:18 .\templates\search.html:51
 msgid "Domain"
 msgstr "Domain"
 
@@ -236,11 +259,17 @@ msgstr "Subdomain (App-Name)"
 msgid "e.g., 'app1' for app1.example.com"
 msgstr "z.B. 'app1' für app1.example.com"
 
-#: .\templates\generate_csr.html:34
+#: .\templates\generate_csr.html:29
+msgid ""
+"Subject details (Country, Organization, etc.) will be automatically applied "
+"based on the selected domain configuration."
+msgstr "Die Betreffdetails (Land, Organisation usw.) werden automatisch basierend auf der ausgewählten Domänenkonfiguration angewendet."
+
+#: .\templates\generate_csr.html:33
 msgid "Generate CSR & Key"
 msgstr "CSR & Schlüssel generieren"
 
-#: .\templates\generate_csr.html:35 .\templates\password_change.html:42
+#: .\templates\generate_csr.html:34 .\templates\password_change.html:42
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -312,10 +341,6 @@ msgstr "Überprüfen"
 msgid "Cancel and logout"
 msgstr "Abbrechen und abmelden"
 
-#: .\templates\password_change.html:9 .\templates\password_change.html:41
-msgid "Change Password"
-msgstr "Passwort ändern"
-
 #: .\templates\password_change.html:13
 msgid "Password Requirements:"
 msgstr "Passwortanforderungen:"
@@ -340,45 +365,51 @@ msgstr "Läuft alle 90 Tage ab"
 msgid "Search by Common Name (live search)"
 msgstr "Suche nach Common Name (Live-Suche)"
 
-#: .\templates\search.html:18
-msgid "Hold Ctrl for multiple domains"
-msgstr "Halten Sie Strg für mehrere Domains gedrückt"
-
-#: .\templates\search.html:26
+#: .\templates\search.html:20
 msgid "All"
 msgstr "Alle"
 
-#: .\templates\search.html:33
+#: .\templates\search.html:23
 msgid "Expiring in 1 Month"
 msgstr "Läuft in 1 Monat ab"
 
-#: .\templates\search.html:42
+#: .\templates\search.html:32
 msgid "Show"
 msgstr "Anzeigen"
 
-#: .\templates\search.html:49
+#: .\templates\search.html:39
 msgid "entries"
 msgstr "Einträge"
 
-#: .\templates\search.html:61
+#: .\templates\search.html:43
+#, python-format
+msgid "Showing %(start)s to %(end)s of %(total)s entries"
+msgstr ""
+
+#: .\templates\search.html:49
 msgid "Common Name"
 msgstr "Common Name"
 
-#: .\templates\search.html:65
+#: .\templates\search.html:53
 msgid "Created"
 msgstr "Erstellt"
 
-#: .\templates\search.html:67
+#: .\templates\search.html:55
 msgid "Expires"
 msgstr "Läuft ab"
 
-#: .\templates\search.html:70
+#: .\templates\search.html:58
 msgid "Actions"
 msgstr "Aktionen"
 
-#: .\templates\search.html:88
+#: .\templates\search.html:75
 msgid "No certificates found."
 msgstr "Keine Zertifikate gefunden."
+
+#: .\templates\search.html:91
+#, python-format
+msgid "Page %(current)s of %(total)s"
+msgstr ""
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
@@ -1603,3 +1634,6 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Hold Ctrl for multiple domains"
+#~ msgstr "Halten Sie Strg für mehrere Domains gedrückt"

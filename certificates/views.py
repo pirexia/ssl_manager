@@ -23,13 +23,13 @@ def generate_csr(request):
             domain = form.cleaned_data['domain']
             subdomain = form.cleaned_data['subdomain']
             full_common_name = f"{subdomain}.{domain.name}"
-            
+
             # Generate Crypto Material
             key = generate_key_pair()
-            
+
             # Use attributes from the selected Domain object
             csr = create_csr_object(
-                key, 
+                key,
                 full_common_name,
                 country=domain.country,
                 state=domain.state,
@@ -38,36 +38,42 @@ def generate_csr(request):
                 organizational_unit=domain.organizational_unit,
                 email=domain.email_address
             )
-            
+
             # Serialize
             pem_key = serialize_key(key)
             pem_csr = serialize_csr(csr)
-            
+
             # Save to DB
             entry = form.save(commit=False)
             entry.common_name = full_common_name
             entry.csr_content = pem_csr
             entry.private_key_content = pem_key
             entry.created_by = request.user
+            # Copy domain attributes to certificate entry
+            entry.organization = domain.organization
+            entry.organizational_unit = domain.organizational_unit
+            entry.locality = domain.locality
+            entry.state = domain.state
+            entry.country = domain.country
             entry.save()
 
             # Save to Storage Directory (organized by common_name)
             storage_dir = os.path.join(settings.BASE_DIR, 'storage', entry.common_name)
             os.makedirs(storage_dir, exist_ok=True)
-            
+
             # Use timestamp as unique identifier for this iteration
             timestamp = entry.created_at.strftime('%Y%m%d_%H%M%S')
-            
+
             with open(os.path.join(storage_dir, f"{timestamp}.key"), 'w') as f:
                 f.write(pem_key)
-            
+
             with open(os.path.join(storage_dir, f"{timestamp}.csr"), 'w') as f:
                 f.write(pem_csr)
-            
+
             return render(request, 'csr_result.html', {'entry': entry})
     else:
         form = CSRGenerationForm()
-    
+
     return render(request, 'generate_csr.html', {'form': form})
 
 @login_required
@@ -91,20 +97,30 @@ def search_certificates(request):
     from django.core.paginator import Paginator
     from django.utils import timezone
     from datetime import timedelta
-    
+    from django.db.models import Max
+
     # Get all certificates by default
     results = CertificateEntry.objects.all()
-    
+
     # Text search filter
     query = request.GET.get('q', '')
     if query:
         results = results.filter(common_name__icontains=query)
-    
+
     # Domain filter (multi-select)
     domain_ids = request.GET.getlist('domains')
     if domain_ids:
         results = results.filter(domain_id__in=domain_ids)
-    
+
+    # Get only the latest entry for each common_name
+    # First, get the latest ID for each common_name
+    latest_entries = results.values('common_name').annotate(
+        latest_id=Max('id')
+    ).values_list('latest_id', flat=True)
+
+    # Filter to only include these latest entries
+    results = CertificateEntry.objects.filter(id__in=latest_entries)
+
     # Expiration filters
     expiry_filter = request.GET.get('expiry', '')
     if expiry_filter == '3months':
@@ -113,7 +129,7 @@ def search_certificates(request):
     elif expiry_filter == '1month':
         one_month = timezone.now() + timedelta(days=30)
         results = results.filter(valid_until__lte=one_month, valid_until__gte=timezone.now())
-    
+
     # Sorting
     sort_by = request.GET.get('sort', '-created_at')
     valid_sorts = ['common_name', '-common_name', 'created_at', '-created_at', 'valid_until', '-valid_until']
@@ -121,7 +137,7 @@ def search_certificates(request):
         results = results.order_by(sort_by)
     else:
         results = results.order_by('-created_at')
-    
+
     # Pagination
     per_page = request.GET.get('per_page', '10')
     try:
@@ -130,14 +146,14 @@ def search_certificates(request):
             per_page = 10
     except ValueError:
         per_page = 10
-    
+
     paginator = Paginator(results, per_page)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
-    
+
     # Get all domains for filter dropdown
     domains = Domain.objects.all()
-    
+
     return render(request, 'search.html', {
         'page_obj': page_obj,
         'query': query,
@@ -158,7 +174,7 @@ def certificate_detail(request, pk):
 @login_required
 def download_file(request, pk, file_type):
     entry = get_object_or_404(CertificateEntry, pk=pk)
-    
+
     if file_type == 'csr':
         content = entry.csr_content
         filename = f"{entry.common_name}.csr"
@@ -167,7 +183,7 @@ def download_file(request, pk, file_type):
         filename = f"{entry.common_name}.key"
     else:
         return HttpResponse(status=404)
-        
+
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
@@ -181,50 +197,50 @@ from django.contrib.auth import update_session_auth_hash
 def upload_certificate(request, pk):
     """Vista para subir el certificado final a una CertificateEntry existente"""
     entry = get_object_or_404(CertificateEntry, pk=pk)
-    
+
     if request.method == 'POST':
         form = CertificateUploadForm(request.POST, request.FILES)
         if form.is_valid():
             cert_file = form.cleaned_data['certificate_file']
             cert_content = cert_file.read().decode('utf-8')
-            
+
             # Validar que el certificado corresponde al CSR
             is_valid, error_msg = validate_certificate_matches_csr(
                 cert_content,
                 entry.csr_content,
                 entry.common_name
             )
-            
+
             if not is_valid:
                 messages.error(request, f"Certificate validation failed: {error_msg}")
                 return redirect('certificate_detail', pk=pk)
-            
+
             # Extraer fechas de validez
             try:
                 valid_from, valid_until = extract_certificate_dates(cert_content)
             except ValueError as e:
                 messages.error(request, str(e))
                 return redirect('certificate_detail', pk=pk)
-            
+
             # Guardar certificado en storage
             storage_dir = os.path.join(settings.BASE_DIR, 'storage', entry.common_name)
             os.makedirs(storage_dir, exist_ok=True)
             timestamp = entry.created_at.strftime('%Y%m%d_%H%M%S')
             cert_path = os.path.join(storage_dir, f"{timestamp}.crt")
-            
+
             with open(cert_path, 'w') as f:
                 f.write(cert_content)
-            
+
             # Actualizar entrada en la base de datos
             entry.certificate_content = cert_content
             entry.valid_from = valid_from
             entry.valid_until = valid_until
             entry.status = CertificateEntry.STATUS_ISSUED
             entry.save()
-            
+
             messages.success(request, 'Certificate uploaded successfully!')
             return redirect('certificate_detail', pk=pk)
-    
+
     # Si es GET, redirigir a la vista de detalle
     return redirect('certificate_detail', pk=pk)
 
@@ -232,10 +248,10 @@ def upload_certificate(request, pk):
 def download_certificate(request, pk, format):
     """Descargar certificado en diferentes formatos"""
     entry = get_object_or_404(CertificateEntry, pk=pk)
-    
+
     if not entry.certificate_content:
         return HttpResponse("No certificate available", status=404)
-    
+
     if format == 'crt':
         # Formato PEM (.crt)
         content = convert_certificate_format(entry.certificate_content, 'pem')
@@ -246,6 +262,11 @@ def download_certificate(request, pk, format):
         content = convert_certificate_format(entry.certificate_content, 'der')
         filename = f"{entry.common_name}.cer"
         content_type = 'application/x-x509-ca-cert'
+    elif format == 'pem':
+        # Formato PEM (.pem)
+        content = convert_certificate_format(entry.certificate_content, 'pem')
+        filename = f"{entry.common_name}.pem"
+        content_type = 'application/x-pem-file'
     elif format == 'pfx':
         # Formato PKCS#12 (.pfx) - requiere contraseña
         if request.method == 'POST':
@@ -253,7 +274,7 @@ def download_certificate(request, pk, format):
             if not password:
                 messages.error(request, 'Password required for PFX export')
                 return redirect('certificate_detail', pk=pk)
-            
+
             try:
                 content = create_pfx(
                     entry.certificate_content,
@@ -270,7 +291,7 @@ def download_certificate(request, pk, format):
             return redirect('certificate_detail', pk=pk)
     else:
         return HttpResponse("Invalid format", status=400)
-    
+
     response = HttpResponse(content, content_type=content_type)
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
@@ -308,7 +329,7 @@ def mfa_setup(request):
     """Generate TOTP device and display QR code"""
     # Check if user already has ANY device (confirmed or not)
     device = TOTPDevice.objects.filter(user=request.user).first()
-    
+
     if not device:
         # Create a new device only if none exists
         device = TOTPDevice.objects.create(
@@ -316,18 +337,18 @@ def mfa_setup(request):
             name='default',
             confirmed=False
         )
-    
+
     # Generate QR code
     url = device.config_url
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(url)
     qr.make(fit=True)
-    
+
     img = qr.make_image(fill_color="black", back_color="white")
     buffer = BytesIO()
     img.save(buffer, format='PNG')
     img_str = base64.b64encode(buffer.getvalue()).decode()
-    
+
     return render(request, 'mfa/setup.html', {
         'qr_code': img_str,
         'secret_key': device.key,
@@ -340,7 +361,7 @@ def mfa_verify_setup(request):
     if request.method == 'POST':
         token = request.POST.get('token')
         device = TOTPDevice.objects.filter(user=request.user, confirmed=False).first()
-        
+
         # Simple verification - django-otp handles time drift internally
         if device and device.verify_token(token):
             device.confirmed = True
@@ -349,14 +370,14 @@ def mfa_verify_setup(request):
             return redirect('home')
         else:
             messages.error(request, 'Invalid token. Please try again.')
-    
+
     return redirect('mfa_setup')
 
 def mfa_login_view(request):
     """Handle MFA token verification during login"""
     if not request.user.is_authenticated:
         return redirect('login')
-    
+
     # Check for trusted device
     trusted_token = request.COOKIES.get('trusted_device')
     if trusted_token:
@@ -364,39 +385,39 @@ def mfa_login_view(request):
             user=request.user,
             token=trusted_token
         ).first()
-        
+
         if trusted_device and trusted_device.is_valid():
             # Skip MFA
             return redirect('home')
-    
+
     # Check if user has MFA enabled
     device = TOTPDevice.objects.filter(user=request.user, confirmed=True).first()
     if not device:
         # No MFA setup, redirect to home
         return redirect('home')
-    
+
     if request.method == 'POST':
         token = request.POST.get('token')
         trust_device = request.POST.get('trust_device') == 'on'
-        
+
         # Simple verification - django-otp handles time drift internally
         if device.verify_token(token):
             # MFA successful - mark session as verified
             request.session['mfa_verified'] = True
             response = redirect('home')
-            
+
             # Create trusted device if requested
             if trust_device:
                 device_token = secrets.token_urlsafe(32)
                 user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
-                
+
                 TrustedDevice.objects.create(
                     user=request.user,
                     token=device_token,
                     expires_at=timezone.now() + timedelta(days=7),
                     user_agent=user_agent
                 )
-                
+
                 # Set cookie (7 days)
                 response.set_cookie(
                     'trusted_device',
@@ -405,15 +426,15 @@ def mfa_login_view(request):
                     httponly=True,
                     secure=False  # Set to True in production with HTTPS
                 )
-            
+
             messages.success(request, 'Login successful!')
             return response
         else:
             messages.error(request, 'Invalid authentication code.')
-    
+
     # Check cookie consent
     cookies_accepted = get_cookie_consent(request)
-    
+
     return render(request, 'mfa/verify.html', {
         'cookies_accepted': cookies_accepted
     })
@@ -426,14 +447,14 @@ def set_cookie_consent(request):
     """Handle cookie consent acceptance/rejection"""
     if request.method == 'POST':
         accept = request.POST.get('accept') == 'true'
-        
+
         # Ensure session exists
         if not request.session.session_key:
             request.session.create()
-        
+
         session_key = request.session.session_key
         user = request.user if request.user.is_authenticated else None
-        
+
         # Create or update consent
         consent, created = CookieConsent.objects.update_or_create(
             session_key=session_key,
@@ -442,16 +463,16 @@ def set_cookie_consent(request):
                 'optional_cookies_accepted': accept
             }
         )
-        
+
         return JsonResponse({'success': True, 'accepted': accept})
-    
+
     return JsonResponse({'success': False}, status=400)
 
 def get_cookie_consent(request):
     """Check if user has accepted optional cookies"""
     if not request.session.session_key:
         return None
-    
+
     try:
         consent = CookieConsent.objects.get(session_key=request.session.session_key)
         return consent.optional_cookies_accepted
@@ -476,49 +497,49 @@ def set_language(request):
     """
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
     response = HttpResponseRedirect(next_url)
-    
+
     if request.method == 'POST':
         lang_code = request.POST.get('language')
-        
+
         if lang_code and check_for_language(lang_code):
             # 1. Save to database for authenticated users
             if request.user.is_authenticated:
                 request.user.preferred_language = lang_code
                 request.user.save(update_fields=['preferred_language'])
-            
+
             # 2. Calculate new URL with prefix
             try:
                 # Parse URL to get path
                 parsed = urlparse(next_url)
                 path = parsed.path
-                
+
                 # Resolve current view
                 match = resolve(path)
-                
+
                 # Reverse with new language
                 with translation.override(lang_code):
                     if match.namespaces:
                         view_name = f"{':'.join(match.namespaces)}:{match.url_name}"
                     else:
                         view_name = match.url_name
-                    
+
                     new_url = reverse(view_name, args=match.args, kwargs=match.kwargs)
-                    
+
                     # Preserve query parameters
                     if parsed.query:
                         new_url += f"?{parsed.query}"
-                        
+
                     response = HttpResponseRedirect(new_url)
             except Exception:
                 # Fallback to translate_url or original url
                 new_url = translate_url(next_url, lang_code)
                 if new_url:
                     response = HttpResponseRedirect(new_url)
-            
+
             # 3. Set session language
             if hasattr(request, 'session'):
                 request.session['_language'] = lang_code
-            
+
             # 4. Set language cookie
             response.set_cookie(
                 settings.LANGUAGE_COOKIE_NAME, lang_code,
@@ -529,5 +550,5 @@ def set_language(request):
                 httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
                 samesite=settings.LANGUAGE_COOKIE_SAMESITE,
             )
-            
+
     return response
