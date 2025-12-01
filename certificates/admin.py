@@ -48,7 +48,7 @@ class CertificateEntryAdmin(admin.ModelAdmin):
     search_fields = ('common_name', 'csr_content', 'domain__name')
     readonly_fields = ('csr_content', 'private_key_content', 'certificate_content', 'created_at', 'created_by')
     actions = ['revoke_certificates']
-    
+
     fieldsets = (
         ('Metadata', {
             'fields': ('common_name', 'domain', 'subdomain', 'status', 'created_by', 'created_at')
@@ -90,10 +90,10 @@ class PasswordHistoryAdmin(admin.ModelAdmin):
     list_display = ('user', 'created_at')
     list_filter = ('user', 'created_at')
     readonly_fields = ('user', 'password_hash', 'created_at')
-    
+
     def has_add_permission(self, request):
         return False
-    
+
     def has_change_permission(self, request, obj=None):
         return False
 
@@ -102,12 +102,12 @@ class TrustedDeviceAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_agent', 'expires_at', 'last_used', 'is_valid')
     list_filter = ('user', 'expires_at')
     readonly_fields = ('user', 'token', 'user_agent', 'expires_at', 'last_used')
-    
+
     def is_valid(self, obj):
         return obj.is_valid()
     is_valid.boolean = True
     is_valid.short_description = 'Valid'
-    
+
     def has_add_permission(self, request):
         return False
 
@@ -116,12 +116,24 @@ class CookieConsentAdmin(admin.ModelAdmin):
     list_display = ('get_identifier', 'optional_cookies_accepted', 'created_at', 'updated_at')
     list_filter = ('optional_cookies_accepted', 'created_at')
     readonly_fields = ('session_key', 'user', 'created_at', 'updated_at')
-    
+
     def get_identifier(self, obj):
         if obj.user:
             return f"User: {obj.user.username}"
         return f"Session: {obj.session_key[:8]}..."
     get_identifier.short_description = 'Identifier'
-    
+
     def has_add_permission(self, request):
         return False
+
+@admin.register(InternalCA)
+class InternalCAAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    readonly_fields = ('root_ca_cert', 'root_ca_key', 'intermediate_ca_cert', 'intermediate_ca_key', 'created_at')
+    fields = ('name', 'is_active', 'created_at', 'root_ca_cert', 'intermediate_ca_cert')
+
+    def has_add_permission(self, request):
+        # Don't allow manual creation - CA is created automatically
+        return False
+
