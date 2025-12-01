@@ -73,10 +73,8 @@
                         <i class="bi bi-person-circle"></i> {{ user.username }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{% url 'mfa_setup' %}"><i class="bi bi-shield-lock"></i> {%
-                                trans "MFA Setup" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'password_change' %}">{% trans "Change Password"
-                                %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mfa_setup' %}"><i class="bi bi-shield-lock"></i> {% trans "MFA Setup" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'password_change' %}">{% trans "Change Password" %}</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -118,16 +116,13 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <p class="mb-0">
-                        <i class="bi bi-cookie"></i> {% trans "This website uses essential cookies for authentication
-                        and optional cookies to remember your trusted devices." %}
+                        <i class="bi bi-cookie"></i> {% blocktrans %}This website uses essential cookies for authentication and optional cookies to remember your trusted devices.{% endblocktrans %}
                         <a href="#" class="text-white text-decoration-underline">{% trans "Learn more" %}</a>
                     </p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="handleCookieConsent(false)">{% trans
-                        "Reject Optional" %}</button>
-                    <button class="btn btn-light btn-sm" onclick="handleCookieConsent(true)">{% trans "Accept All"
-                        %}</button>
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="handleCookieConsent(false)">{% trans "Reject Optional" %}</button>
+                    <button class="btn btn-light btn-sm" onclick="handleCookieConsent(true)">{% trans "Accept All" %}</button>
                 </div>
             </div>
         </div>
