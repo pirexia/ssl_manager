@@ -1,6 +1,40 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block extra_head %}
+<style>
+    .table-primary {
+        background-color: #cfe2ff !important;
+    }
+</style>
+<script>
+function togglePassword(fieldId, button) {
+    const field = document.getElementById(fieldId);
+    const icon = button.querySelector('i');
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+function validatePfxPasswords(iterationPk) {
+    const password = document.getElementById('pfx_password_' + iterationPk).value;
+    const confirm = document.getElementById('pfx_password_confirm_' + iterationPk).value;
+
+    if (password !== confirm) {
+        alert('{% trans "Passwords do not match. Please try again." %}');
+        return false;
+    }
+    return true;
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-12">
@@ -93,6 +127,12 @@
                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#uploadModal{{ iteration.pk }}"
                                         title="{% trans 'Upload Certificate' %}"><i class="bi bi-upload"></i> {% trans "Upload" %}</button>
+                                    <form method="post" action="{% url 'generate_internal_certificate' iteration.pk %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success rounded-0" title="{% trans 'Generate with Internal CA' %}">
+                                            <i class="bi bi-shield-lock"></i> {% trans "Generate Internal" %}
+                                        </button>
+                                    </form>
                                     {% else %}
                                     <a href="{% url 'download_certificate' iteration.pk 'crt' %}"
                                         class="btn btn-success" title="Download as CRT">CRT</a>
@@ -100,9 +140,21 @@
                                         class="btn btn-success" title="Download as CER">CER</a>
                                     <a href="{% url 'download_certificate' iteration.pk 'pem' %}"
                                         class="btn btn-success" title="Download as PEM">PEM</a>
-                                    <button class="btn btn-success" data-bs-toggle="modal"
+                                    <button class="btn btn-success align-baseline" data-bs-toggle="modal"
                                         data-bs-target="#pfxModal{{ iteration.pk }}"
                                         title="Download as PFX">PFX</button>
+                                    {% if iteration.is_internal %}
+                                    <a href="{% url 'download_certificate' iteration.pk 'bundle' %}"
+                                        class="btn btn-info" title="Download Bundle (Cert + Intermediate + Root)">Bundle</a>
+                                    <a href="{% url 'download_ca_certificate' 'root' %}" class="btn btn-secondary" title="Download Root CA">Root</a>
+                                    <a href="{% url 'download_ca_certificate' 'intermediate' %}" class="btn btn-secondary" title="Download Intermediate CA">Intermediate</a>
+                                    {% endif %}
+                                    <form method="post" action="{% url 'delete_certificate' iteration.pk %}" class="d-inline" onsubmit="return confirm('{% trans 'Are you sure you want to delete this certificate? This action cannot be undone.' %}');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger rounded-start-0 align-baseline" title="{% trans 'Delete Certificate' %}">
+                                            <i class="bi bi-trash"></i> {% trans "Delete" %}
+                                        </button>
+                                    </form>
                                     {% endif %}
                                 </div>
                                 {% if iteration.pk == entry.pk %}
@@ -169,23 +221,35 @@
                     <form method="post" action="{% url 'download_certificate' iteration.pk 'pfx' %}">
                         {% csrf_token %}
                         <div class="modal-body">
-                            <p>{% trans "The PFX file will contain both the certificate and private key, protected by a
-                                password." %}</p>
+                            <p>{% trans "The PFX file will contain both the certificate and private key, protected by a password." %}</p>
                             <div class="mb-3">
-                                <label for="pfx_password_{{ iteration.pk }}" class="form-label">{% trans "PFX Password"
-                                    %}</label>
-                                <input type="password" class="form-control" id="pfx_password_{{ iteration.pk }}"
-                                    name="pfx_password" required minlength="4">
-                                <div class="form-text">{% trans "Enter a password to protect the PFX file (minimum 4
-                                    characters)" %}</div>
+                                <label for="pfx_password_{{ iteration.pk }}" class="form-label">{% trans "PFX Password" %}</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="pfx_password_{{ iteration.pk }}"
+                                        name="pfx_password" required minlength="4">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('pfx_password_{{ iteration.pk }}', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">{% trans "Enter a password to protect the PFX file (minimum 4 characters)" %}</div>
                             </div>
-                            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> {% trans
-                                "Remember this password! You'll need it to import the PFX file." %}</div>
+                            <div class="mb-3">
+                                <label for="pfx_password_confirm_{{ iteration.pk }}" class="form-label">{% trans "Confirm Password" %}</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="pfx_password_confirm_{{ iteration.pk }}"
+                                        name="pfx_password_confirm" required minlength="4">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('pfx_password_confirm_{{ iteration.pk }}', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> {% trans "Remember this password! You'll need it to import the PFX file." %}</div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel"
-                                %}</button>
-                            <button type="submit" class="btn btn-success">{% trans "Download PFX" %}</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                            <button type="submit" class="btn btn-success" onclick="return validatePfxPasswords('{{ iteration.pk }}')">{% trans "Download PFX" %}</button>
                         </div>
                     </form>
                 </div>

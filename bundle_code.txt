@@ -1,0 +1,18 @@
+# Add this to the download_certificate function, right before the "else: return HttpResponse("Invalid format")" line
+
+    elif format == 'bundle':
+        # Certificate bundle (only for internal certificates)
+        if not entry.is_internal:
+            messages.error(request, 'Bundle download is only available for internally-generated certificates')
+            return redirect('certificate_detail', pk=pk)
+        
+        from .utils import create_certificate_bundle, get_or_create_internal_ca
+        
+        ca = get_or_create_internal_ca()
+        content = create_certificate_bundle(
+            entry.certificate_content,
+            ca.intermediate_ca_cert,
+            ca.root_ca_cert
+        ).encode('utf-8')
+        filename = f"{entry.common_name}_bundle.pem"
+        content_type = 'application/x-pem-file'

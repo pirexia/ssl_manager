@@ -284,11 +284,27 @@ def download_certificate(request, pk, format):
                 filename = f"{entry.common_name}.pfx"
                 content_type = 'application/x-pkcs12'
             except ValueError as e:
-                messages.error(request, f"Error creating PFX: {str(e)}")
+                messages.error(request, f'Error creating PFX: {str(e)}')
                 return redirect('certificate_detail', pk=pk)
         else:
-            # Si es GET, redirigir a la vista de detalle (el modal debe usar POST)
+            messages.error(request, 'PFX download requires POST request with password')
             return redirect('certificate_detail', pk=pk)
+    elif format == 'bundle':
+        # Certificate bundle (only for internal certificates)
+        if not entry.is_internal:
+            messages.error(request, 'Bundle download is only available for internally-generated certificates')
+            return redirect('certificate_detail', pk=pk)
+
+        from .utils import create_certificate_bundle, get_or_create_internal_ca
+
+        ca = get_or_create_internal_ca()
+        content = create_certificate_bundle(
+            entry.certificate_content,
+            ca.intermediate_ca_cert,
+            ca.root_ca_cert
+        ).encode('utf-8')
+        filename = f"{entry.common_name}_bundle.crt"
+        content_type = 'application/x-x509-ca-cert'
     else:
         return HttpResponse("Invalid format", status=400)
 
@@ -302,7 +318,7 @@ def password_change_view(request):
         form = CustomPasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
             return redirect('home')
         else:
@@ -552,3 +568,86 @@ def set_language(request):
             )
 
     return response
+@login_required
+def generate_internal_certificate(request, pk):
+    """Generate and sign certificate using internal CA"""
+    if request.method != 'POST':
+        return redirect('certificate_detail', pk=pk)
+
+    entry = get_object_or_404(CertificateEntry, pk=pk)
+
+    # Check if certificate already exists
+    if entry.certificate_content:
+        messages.warning(request, 'Certificate already exists for this entry')
+        return redirect('certificate_detail', pk=pk)
+
+    try:
+        from .utils import sign_csr_with_internal_ca, extract_certificate_dates
+
+        # Sign CSR with internal CA
+        cert_content = sign_csr_with_internal_ca(entry.csr_content, validity_days=365)
+
+        # Extract dates
+        valid_from, valid_until = extract_certificate_dates(cert_content)
+
+        # Update entry
+        entry.certificate_content = cert_content
+        entry.valid_from = valid_from
+        entry.valid_until = valid_until
+        entry.status = CertificateEntry.STATUS_ISSUED
+        entry.is_internal = True
+        entry.save()
+
+        messages.success(request, 'Certificate generated successfully with Internal CA!')
+
+    except Exception as e:
+        messages.error(request, f'Error generating certificate: {str(e)}')
+
+    return redirect('certificate_detail', pk=pk)
+
+
+@login_required
+def download_ca_certificate(request, ca_type):
+    """Download Root or Intermediate CA certificate"""
+    from .utils import get_or_create_internal_ca
+
+    ca = get_or_create_internal_ca()
+
+    if ca_type == 'root':
+        content = ca.root_ca_cert
+        filename = "SSL_Manager_Root_CA.crt"
+    elif ca_type == 'intermediate':
+        content = ca.intermediate_ca_cert
+        filename = "SSL_Manager_Intermediate_CA.crt"
+    else:
+        return HttpResponse("Invalid CA type", status=400)
+
+    response = HttpResponse(content, content_type='application/x-x509-ca-cert')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+@login_required
+def delete_certificate(request, pk):
+    """Delete the certificate content from an entry, resetting it to PENDING"""
+    if request.method != 'POST':
+        return redirect('certificate_detail', pk=pk)
+
+    entry = get_object_or_404(CertificateEntry, pk=pk)
+
+    if not entry.certificate_content:
+        messages.warning(request, 'No certificate to delete')
+        return redirect('certificate_detail', pk=pk)
+
+    try:
+        # Clear certificate data
+        entry.certificate_content = None
+        entry.valid_from = None
+        entry.valid_until = None
+        entry.is_internal = False
+        entry.status = CertificateEntry.STATUS_PENDING
+        entry.save()
+
+        messages.success(request, 'Certificate deleted successfully. You can now upload a new one or generate it internally.')
+    except Exception as e:
+        messages.error(request, f'Error deleting certificate: {str(e)}')
+
+    return redirect('certificate_detail', pk=pk)

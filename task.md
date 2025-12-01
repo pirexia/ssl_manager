@@ -32,7 +32,7 @@
         - [x] Automatic date extraction from X.509 certificates
         - [x] Download in multiple formats (CRT, CER, PFX)
         - [x] Per-iteration upload buttons in history table
-- [/] Frontend Development
+- [x] Frontend Development
     - [x] Design Base Templates (Navbar, Layout) <!-- id: 13 -->
     - [x] Implement Homepage (Generate vs Search) <!-- id: 14 -->
     - [x] Implement CSR Generation Wizard <!-- id: 15 -->
@@ -81,15 +81,15 @@
         - [x] Translate all strings to Italian
         - [x] Compile and test Italian translation
     - [/] Implement Internal CA for Certificate Generation <!-- id: 32 -->
-        - [ ] Create InternalCA model (single global CA)
-        - [ ] Add CA generation utilities (root + intermediate)
-        - [ ] Add is_internal field to CertificateEntry
-        - [ ] Implement generate_internal_certificate view
-        - [ ] Add "Generate Internal" button in certificate detail
-        - [ ] Add bundle download support for internal certs
-        - [ ] Create database migration
+        - [x] Create InternalCA model (single global CA)
+        - [x] Add CA generation utilities (root + intermediate)
+        - [x] Add is_internal field to CertificateEntry
+        - [x] Implement generate_internal_certificate view
+        - [x] Add "Generate Internal" button in certificate detail
+        - [x] Add bundle download support for internal certs
+        - [x] Create database migration
         - [ ] Test CA generation and certificate signing
 - [ ] Verification & Deployment Prep
-    - [ ] Create Installer Script <!-- id: 20 -->
+    - [x] Test functionality <!-- id: 10 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->
     - [ ] Manual Verification Walkthrough <!-- id: 22 -->

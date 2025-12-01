@@ -1,0 +1,38 @@
+# Add this view function to the end of views.py
+
+@login_required
+def generate_internal_certificate(request, pk):
+    """Generate and sign certificate using internal CA"""
+    if request.method != 'POST':
+        return redirect('certificate_detail', pk=pk)
+    
+    entry = get_object_or_404(CertificateEntry, pk=pk)
+    
+    # Check if certificate already exists
+    if entry.certificate_content:
+        messages.warning(request, 'Certificate already exists for this entry')
+        return redirect('certificate_detail', pk=pk)
+    
+    try:
+        from .utils import sign_csr_with_internal_ca, extract_certificate_dates
+        
+        # Sign CSR with internal CA
+        cert_content = sign_csr_with_internal_ca(entry.csr_content, validity_days=365)
+        
+        # Extract dates
+        valid_from, valid_until = extract_certificate_dates(cert_content)
+        
+        # Update entry
+        entry.certificate_content = cert_content
+        entry.valid_from = valid_from
+        entry.valid_until = valid_until
+        entry.status = CertificateEntry.STATUS_ISSUED
+        entry.is_internal = True
+        entry.save()
+        
+        messages.success(request, 'Certificate generated successfully with Internal CA!')
+        
+    except Exception as e:
+        messages.error(request, f'Error generating certificate: {str(e)}')
+    
+    return redirect('certificate_detail', pk=pk)

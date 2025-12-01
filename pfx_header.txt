@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block extra_head %}
+<style>
+    .table-primary {
+        background-color: #cfe2ff !important;
+    }
+</style>
+<script>
+function togglePassword(fieldId, button) {
+    const field = document.getElementById(fieldId);
+    const icon = button.querySelector('i');
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+function validatePfxPasswords(iterationPk) {
+    const password = document.getElementById('pfx_password_' + iterationPk).value;
+    const confirm = document.getElementById('pfx_password_confirm_' + iterationPk).value;
+
+    if (password !== confirm) {
+        alert('{% trans "Passwords do not match. Please try again." %}');
+        return false;
+    }
+    return true;
+}
+</script>
+{% endblock %}

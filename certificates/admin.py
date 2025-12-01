@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from .models import User, Role, Domain, CertificateEntry, PasswordPolicy, PasswordHistory, TrustedDevice, CookieConsent
+from .models import User, Role, Domain, CertificateEntry, PasswordPolicy, PasswordHistory, TrustedDevice, CookieConsent, InternalCA
 
 # Custom User Admin
 class CustomUserAdmin(UserAdmin):
