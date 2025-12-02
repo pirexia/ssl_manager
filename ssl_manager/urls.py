@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf.urls.i18n import i18n_patterns
-from certificates.views import set_language
+from certificates.views import set_language, login_view
 
 urlpatterns = [
     path('i18n/setlang/', set_language, name='set_language'),
@@ -26,8 +26,9 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('login/', login_view, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('', include('certificates.urls')),
+    prefix_default_language=False,
 )
 

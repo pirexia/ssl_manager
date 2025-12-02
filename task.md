@@ -93,6 +93,13 @@
         - [x] Swap Domain and Subdomain fields position (Domain to the right)
         - [x] Add "Renew Certificate" section with dropdown of existing certificates
         - [x] Implement renewal logic (pre-fill form from selected certificate)
+- [x] LDAP/AD Integration <!-- id: 34 -->
+    - [x] Install django-auth-ldap and dependencies
+    - [x] Configure LDAP settings (Server, Bind DN, User Search)
+    - [x] Implement Custom Authentication Backends (Local vs LDAP selector logic)
+    - [x] Enforce "Pre-registered User" requirement (AUTH_LDAP_CREATE_USER = False)
+    - [x] Update Login UI with "Authentication Source" selector
+    - [x] Update Login View to handle source selection
 - [ ] Verification & Deployment Prep
     - [x] Test functionality <!-- id: 10 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_otp',
     'django_otp.plugins.otp_totp',
+    'django_python3_ldap',
     'certificates',
 ]
 
@@ -148,3 +149,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# Map Django message tags to Bootstrap alert classes
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'certificates.backends.SourceAwareLDAPBackend',
+    'certificates.backends.SourceAwareModelBackend',
+]
+
+# LDAP Configuration
+# These settings should be customized for your LDAP/AD server
+LDAP_AUTH_URL = "ldap://localhost:389"  # Change to your LDAP server URL
+LDAP_AUTH_USE_TLS = False  # Set to True for production
+LDAP_AUTH_SEARCH_BASE = "ou=users,dc=sslmanager,dc=local"  # Change to your LDAP base DN
+LDAP_AUTH_OBJECT_CLASS = "inetOrgPerson"  # Common for OpenLDAP, use "user" for Active Directory
+LDAP_AUTH_USER_FIELDS = {
+    "username": "uid",  # For Active Directory, use "sAMAccountName"
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
+LDAP_AUTH_USER_LOOKUP_FIELDS = ("username",)
+LDAP_AUTH_CLEAN_USER_DATA = "certificates.ldap_sync.clean_user_data"
+LDAP_AUTH_SYNC_USER_RELATIONS = "certificates.ldap_sync.sync_user_relations"
+LDAP_AUTH_FORMAT_SEARCH_FILTERS = "certificates.ldap_sync.format_search_filters"
+LDAP_AUTH_FORMAT_USERNAME = "certificates.ldap_sync.format_username"
+
+# CRITICAL: Prevent auto-creation of users - users must be pre-registered
+LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = None  # Set to your AD domain if using AD (e.g., "MYCOMPANY")
+LDAP_AUTH_CONNECTION_USERNAME = "cn=admin,dc=sslmanager,dc=local"
+LDAP_AUTH_CONNECTION_PASSWORD = "admin123"

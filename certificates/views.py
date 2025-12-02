@@ -1,5 +1,33 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login_func
+from django.contrib import messages
+
+def login_view(request):
+    """Custom login view that handles auth_source selection"""
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        auth_source = request.POST.get('auth_source', 'local')
+
+        # Authenticate with the selected source
+        user = authenticate(request, username=username, password=password, auth_source=auth_source)
+
+        if user is not None:
+            # Login successful
+            auth_login_func(request, user, backend=f'certificates.backends.SourceAware{"LDAP" if auth_source == "ldap" else "Model"}Backend')
+            # auth_source is already stored in session by the backend
+            return redirect('mfa_login')  # Continue to MFA if enabled
+        else:
+            # Authentication failed
+            messages.error(request, 'Invalid username, password, or authentication source.')
+            return render(request, 'login.html')
+
+    return render(request, 'login.html')
+
 
 @login_required
 def home(request):
@@ -389,6 +417,11 @@ def download_certificate(request, pk, format):
 
 @login_required
 def password_change_view(request):
+    # Check if user logged in via LDAP
+    if request.session.get('auth_source') == 'ldap':
+        messages.error(request, 'LDAP users cannot change their password here. Please contact your system administrator.')
+        return redirect('home')
+
     if request.method == 'POST':
         form = CustomPasswordChangeForm(request.user, request.POST)
         if form.is_valid():

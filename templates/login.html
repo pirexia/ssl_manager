@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block content %}
+{%block content %}
 <div class="row justify-content-center mt-5">
     <div class="col-md-4">
         <div class="card">
@@ -17,6 +17,26 @@
                         <label for="id_password" class="form-label">{% trans "Password" %}</label>
                         <input type="password" name="password" class="form-control" id="id_password" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Authentication Source" %}</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="auth_source" id="auth_source_local" value="local" checked>
+                            <label class="form-check-label" for="auth_source_local">
+                                {% trans "Local User" %}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="auth_source" id="auth_source_ldap" value="ldap">
+                            <label class="form-check-label" for="auth_source_ldap">
+                                {% trans "LDAP/AD User" %}
+                            </label>
+                        </div>
+                    </div>
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% trans "Invalid username, password, or authentication source. Please try again." %}
+                        </div>
+                    {% endif %}
                     <button type="submit" class="btn btn-primary w-100">{% trans "Sign In" %}</button>
                 </form>
             </div>
