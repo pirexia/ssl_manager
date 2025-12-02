@@ -236,14 +236,8 @@ function validatePfxPasswords(iterationPk) {
                             </div>
                             <div class="mb-3">
                                 <label for="pfx_password_confirm_{{ iteration.pk }}" class="form-label">{% trans "Confirm Password" %}</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="pfx_password_confirm_{{ iteration.pk }}"
-                                        name="pfx_password_confirm" required minlength="4">
-                                    <button class="btn btn-outline-secondary" type="button"
-                                        onclick="togglePassword('pfx_password_confirm_{{ iteration.pk }}', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
+                                <input type="password" class="form-control" id="pfx_password_confirm_{{ iteration.pk }}"
+                                    name="pfx_password_confirm" required minlength="4">
                             </div>
                             <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> {% trans "Remember this password! You'll need it to import the PFX file." %}</div>
                         </div>
