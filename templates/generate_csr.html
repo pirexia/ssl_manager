@@ -9,31 +9,62 @@
                 <h4 class="mb-0">{% trans "Generate New CSR" %}</h4>
             </div>
             <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
 
-                    <h5 class="mb-3">{% trans "Domain Information" %}</h5>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">{% trans "Domain" %} *</label>
-                            {{ form.domain }}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">{% trans "Subdomain (App Name)" %} *</label>
-                            {{ form.subdomain }}
-                            <div class="form-text">{% trans "e.g., 'app1' for app1.example.com" %}</div>
-                        </div>
+                <!-- Option 1: Renewal -->
+                <div class="card mb-4 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">{% trans "Option 1: Renew Existing Certificate" %}</h5>
                     </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <p class="small text-muted mb-2">{% trans "Select an existing certificate to regenerate a CSR with the same details." %}</p>
+                            <div class="input-group">
+                                <select name="renew_cert_id" class="form-select" required>
+                                    <option value="">{% trans "Select Certificate to Renew..." %}</option>
+                                    {% for cert in existing_certs %}
+                                        <option value="{{ cert.id }}">{{ cert.common_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-primary">{% trans "Renew CSR" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> {% trans "Subject details (Country, Organization, etc.) will be automatically applied based on the selected domain configuration." %}
+                <!-- Option 2: New -->
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">{% trans "Option 2: Generate New CSR" %}</h5>
                     </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <h5 class="mb-3">{% trans "Domain Information" %}</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">{% trans "Subdomain (App Name)" %} *</label>
+                                    {{ form.subdomain }}
+                                    <div class="form-text">{% trans "e.g., 'app1' for app1.example.com" %}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">{% trans "Domain" %} *</label>
+                                    {{ form.domain }}
+                                </div>
+                            </div>
 
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success btn-lg">{% trans "Generate CSR & Key" %}</button>
-                        <a href="{% url 'home' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> {% trans "Subject details (Country, Organization, etc.) will be automatically applied based on the selected domain configuration." %}
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-success btn-lg">{% trans "Generate CSR & Key" %}</button>
+                                <a href="{% url 'home' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
+
             </div>
         </div>
     </div>

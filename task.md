@@ -80,7 +80,7 @@
         - [x] Generate Italian (IT) .po file
         - [x] Translate all strings to Italian
         - [x] Compile and test Italian translation
-    - [/] Implement Internal CA for Certificate Generation <!-- id: 32 -->
+    - [x] Implement Internal CA for Certificate Generation <!-- id: 32 -->
         - [x] Create InternalCA model (single global CA)
         - [x] Add CA generation utilities (root + intermediate)
         - [x] Add is_internal field to CertificateEntry
@@ -88,7 +88,11 @@
         - [x] Add "Generate Internal" button in certificate detail
         - [x] Add bundle download support for internal certs
         - [x] Create database migration
-        - [ ] Test CA generation and certificate signing
+        - [x] Test CA generation and certificate signing
+    - [x] Enhance CSR Generation UI <!-- id: 33 -->
+        - [x] Swap Domain and Subdomain fields position (Domain to the right)
+        - [x] Add "Renew Certificate" section with dropdown of existing certificates
+        - [x] Implement renewal logic (pre-fill form from selected certificate)
 - [ ] Verification & Deployment Prep
     - [x] Test functionality <!-- id: 10 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->

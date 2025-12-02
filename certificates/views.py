@@ -15,53 +15,68 @@ from django.conf import settings
 import os
 
 @login_required
+@login_required
 def generate_csr(request):
-    if request.method == 'POST':
-        form = CSRGenerationForm(request.POST)
-        if form.is_valid():
-            # Extract data
-            domain = form.cleaned_data['domain']
-            subdomain = form.cleaned_data['subdomain']
-            full_common_name = f"{subdomain}.{domain.name}"
+    # Get unique certificates for renewal dropdown (latest per common_name)
+    from django.db.models import Max
+    latest_ids = CertificateEntry.objects.values('common_name').annotate(
+        latest_id=Max('id')
+    ).values_list('latest_id', flat=True)
+    existing_certs = CertificateEntry.objects.filter(id__in=latest_ids).order_by('common_name')
 
-            # Generate Crypto Material
+    if request.method == 'POST':
+        # Check if this is a renewal request
+        renew_cert_id = request.POST.get('renew_cert_id')
+
+        if renew_cert_id:
+            # Handle Renewal
+            original_entry = get_object_or_404(CertificateEntry, pk=renew_cert_id)
+
+            # Use data from original entry
+            domain = original_entry.domain
+            subdomain = original_entry.subdomain
+            full_common_name = original_entry.common_name
+
+            # Generate NEW Crypto Material
             key = generate_key_pair()
 
-            # Use attributes from the selected Domain object
+            # Create CSR using original entry's details
             csr = create_csr_object(
                 key,
                 full_common_name,
-                country=domain.country,
-                state=domain.state,
-                locality=domain.locality,
-                organization=domain.organization,
-                organizational_unit=domain.organizational_unit,
-                email=domain.email_address
+                country=original_entry.country,
+                state=original_entry.state,
+                locality=original_entry.locality,
+                organization=original_entry.organization,
+                organizational_unit=original_entry.organizational_unit,
+                email=original_entry.email_address
             )
 
             # Serialize
             pem_key = serialize_key(key)
             pem_csr = serialize_csr(csr)
 
-            # Save to DB
-            entry = form.save(commit=False)
-            entry.common_name = full_common_name
-            entry.csr_content = pem_csr
-            entry.private_key_content = pem_key
-            entry.created_by = request.user
-            # Copy domain attributes to certificate entry
-            entry.organization = domain.organization
-            entry.organizational_unit = domain.organizational_unit
-            entry.locality = domain.locality
-            entry.state = domain.state
-            entry.country = domain.country
+            # Save new entry
+            entry = CertificateEntry(
+                common_name=full_common_name,
+                domain=domain,
+                subdomain=subdomain,
+                csr_content=pem_csr,
+                private_key_content=pem_key,
+                created_by=request.user,
+                # Copy attributes
+                country=original_entry.country,
+                state=original_entry.state,
+                locality=original_entry.locality,
+                organization=original_entry.organization,
+                organizational_unit=original_entry.organizational_unit,
+                email_address=original_entry.email_address
+            )
             entry.save()
 
-            # Save to Storage Directory (organized by common_name)
+            # Save to Storage
             storage_dir = os.path.join(settings.BASE_DIR, 'storage', entry.common_name)
             os.makedirs(storage_dir, exist_ok=True)
-
-            # Use timestamp as unique identifier for this iteration
             timestamp = entry.created_at.strftime('%Y%m%d_%H%M%S')
 
             with open(os.path.join(storage_dir, f"{timestamp}.key"), 'w') as f:
@@ -71,10 +86,70 @@ def generate_csr(request):
                 f.write(pem_csr)
 
             return render(request, 'csr_result.html', {'entry': entry})
+
+        else:
+            # Standard Generation
+            form = CSRGenerationForm(request.POST)
+            if form.is_valid():
+                # Extract data
+                domain = form.cleaned_data['domain']
+                subdomain = form.cleaned_data['subdomain']
+                full_common_name = f"{subdomain}.{domain.name}"
+
+                # Generate Crypto Material
+                key = generate_key_pair()
+
+                # Use attributes from the selected Domain object
+                csr = create_csr_object(
+                    key,
+                    full_common_name,
+                    country=domain.country,
+                    state=domain.state,
+                    locality=domain.locality,
+                    organization=domain.organization,
+                    organizational_unit=domain.organizational_unit,
+                    email=domain.email_address
+                )
+
+                # Serialize
+                pem_key = serialize_key(key)
+                pem_csr = serialize_csr(csr)
+
+                # Save to DB
+                entry = form.save(commit=False)
+                entry.common_name = full_common_name
+                entry.csr_content = pem_csr
+                entry.private_key_content = pem_key
+                entry.created_by = request.user
+                # Copy domain attributes to certificate entry
+                entry.organization = domain.organization
+                entry.organizational_unit = domain.organizational_unit
+                entry.locality = domain.locality
+                entry.state = domain.state
+                entry.country = domain.country
+                entry.save()
+
+                # Save to Storage Directory (organized by common_name)
+                storage_dir = os.path.join(settings.BASE_DIR, 'storage', entry.common_name)
+                os.makedirs(storage_dir, exist_ok=True)
+
+                # Use timestamp as unique identifier for this iteration
+                timestamp = entry.created_at.strftime('%Y%m%d_%H%M%S')
+
+                with open(os.path.join(storage_dir, f"{timestamp}.key"), 'w') as f:
+                    f.write(pem_key)
+
+                with open(os.path.join(storage_dir, f"{timestamp}.csr"), 'w') as f:
+                    f.write(pem_csr)
+
+                return render(request, 'csr_result.html', {'entry': entry})
     else:
         form = CSRGenerationForm()
 
-    return render(request, 'generate_csr.html', {'form': form})
+    return render(request, 'generate_csr.html', {
+        'form': form,
+        'existing_certs': existing_certs
+    })
 
 @login_required
 def get_domain_details(request, domain_id):
