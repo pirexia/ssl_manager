@@ -149,7 +149,7 @@ function validatePfxPasswords(iterationPk) {
                                     <a href="{% url 'download_ca_certificate' 'root' %}" class="btn btn-secondary" title="Download Root CA">Root</a>
                                     <a href="{% url 'download_ca_certificate' 'intermediate' %}" class="btn btn-secondary" title="Download Intermediate CA">Intermediate</a>
                                     {% endif %}
-                                    <form method="post" action="{% url 'delete_certificate' iteration.pk %}" class="d-inline" onsubmit="return confirm('{% trans 'Are you sure you want to delete this certificate? This action cannot be undone.' %}');">
+                                    <form method="post" action="{% url 'delete_certificate' iteration.pk %}" class="d-inline" data-confirm-message="{% trans 'Are you sure you want to delete this certificate? This action cannot be undone.' %}" onsubmit="return confirm(this.getAttribute('data-confirm-message'));">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger rounded-start-0 align-baseline" title="{% trans 'Delete Certificate' %}">
                                             <i class="bi bi-trash"></i> {% trans "Delete" %}
