@@ -97,3 +97,21 @@ If you need to configure LDAP, edit the `ssl_manager/settings.py` file or add LD
 4.  Configure `.env` (copy from `install.sh` logic).
 5.  Run migrations: `python manage.py migrate`.
 6.  Run server: `gunicorn ssl_manager.wsgi:application --bind 0.0.0.0:8000`.
+
+## Upgrading the Application
+
+To upgrade to the latest version or a specific tag:
+
+1.  **Run the upgrade script:**
+    ```bash
+    chmod +x upgrade.sh
+    sudo ./upgrade.sh
+    ```
+    This will pull the latest code from the `master` branch, update dependencies, migrate the database, and restart the service.
+
+2.  **Upgrade to a specific version:**
+    You can pass a version tag to the script:
+    ```bash
+    sudo ./upgrade.sh v1.1
+    ```
+

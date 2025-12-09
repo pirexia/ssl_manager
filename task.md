@@ -1,3 +1,15 @@
+# Tasks
+
+- [x] Project Initialization & Planning
+    - [x] Define Tech Stack & Requirements <!-- id: 0 -->
+    - [x] Initialize Git Repository <!-- id: 1 -->
+    - [x] Create Implementation Plan <!-- id: 2 -->
+- [x] Environment Setup
+    - [x] Create Virtual Environment <!-- id: 3 -->
+    - [x] Install Dependencies (Django, mysqlclient, cryptography) <!-- id: 4 -->
+    - [x] Configure Database (MariaDB/SQLite for dev) <!-- id: 5 -->
+- [x] Backend Development - Core
+    - [x] Initialize Django Project & App <!-- id: 6 -->
     - [x] Implement Database Models (Users, Roles, Domains, CSRs) <!-- id: 7 -->
     - [x] Implement Password Policies & Security <!-- id: 8 -->
         - [x] Password complexity enforcement
@@ -69,9 +81,21 @@
     - [x] Enforce "Pre-registered User" requirement (AUTH_LDAP_CREATE_USER = False)
     - [x] Update Login UI with "Authentication Source" selector
     - [x] Update Login View to handle source selection
-- [ ] Verification & Deployment Prep
+- [x] Verification & Deployment Prep
     - [x] Test functionality <!-- id: 10 -->
     - [x] Verify Security Requirements <!-- id: 21 -->
         - [x] Automated Security Tests (Password Policy, Crypto) <!-- id: 35 -->
         - [x] OWASP Pentesting (IDOR, Injection, Auth) <!-- id: 36 -->
     - [x] Manual Verification Walkthrough <!-- id: 22 -->
+- [x] Installation & Deployment <!-- id: 37 -->
+    - [x] Analyze Prerequisites for RHEL9/Linux <!-- id: 38 -->
+    - [x] Database Support Verification (MySQL/MariaDB vs SQLite) <!-- id: 39 -->
+    - [x] Cleanup Project (Remove temporary/unnecessary files) <!-- id: 40 -->
+    - [x] Create Example Data Fixtures <!-- id: 41 -->
+    - [x] Create Installer Script (Linux/Bash) <!-- id: 42 -->
+- [x] Documentation <!-- id: 43 -->
+    - [x] Create Installation Manual (INSTALL.md) <!-- id: 44 -->
+- [x] Release Management <!-- id: 45 -->
+    - [x] Create Upgrade Script (upgrade.sh) <!-- id: 46 -->
+    - [x] Update Documentation with Upgrade Instructions <!-- id: 47 -->
+    - [x] Tag Release v1.0 in Git <!-- id: 48 -->
