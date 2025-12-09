@@ -1,15 +1,3 @@
-# Tasks
-
-- [x] Project Initialization & Planning
-    - [x] Define Tech Stack & Requirements <!-- id: 0 -->
-    - [x] Initialize Git Repository <!-- id: 1 -->
-    - [x] Create Implementation Plan <!-- id: 2 -->
-- [x] Environment Setup
-    - [x] Create Virtual Environment <!-- id: 3 -->
-    - [x] Install Dependencies (Django, mysqlclient, cryptography) <!-- id: 4 -->
-    - [x] Configure Database (MariaDB/SQLite for dev) <!-- id: 5 -->
-- [/] Backend Development - Core
-    - [x] Initialize Django Project & App <!-- id: 6 -->
     - [x] Implement Database Models (Users, Roles, Domains, CSRs) <!-- id: 7 -->
     - [x] Implement Password Policies & Security <!-- id: 8 -->
         - [x] Password complexity enforcement
@@ -37,25 +25,6 @@
     - [x] Implement Homepage (Generate vs Search) <!-- id: 14 -->
     - [x] Implement CSR Generation Wizard <!-- id: 15 -->
     - [x] Implement Advanced Search & Detail View <!-- id: 16 -->
-        - [x] Live/Interactive Search (500ms debounce)
-        - [x] Multi-select Domain Filter
-        - [x] Expiration Date Filters (3 months, 1 month)
-        - [x] Sortable Columns (Common Name, Created, Expires)
-        - [x] Pagination (10/25/50/100 per page)
-        - [x] Focus Preservation & Cursor Position Restoration
-    - [x] Implement Iteration History View <!-- id: 17 -->
-    - [x] Implement Certificate Upload Form <!-- id: 18 -->
-    - [x] Implement Admin Panel (Custom & Django Admin) <!-- id: 19 -->
-    - [x] Implement Cookie Consent Banner <!-- id: 24 -->
-        - [x] Create cookie banner component
-        - [x] Store user consent preference
-        - [x] Disable Trusted Device feature if cookies not accepted
-        - [x] Show warning in MFA page if cookies disabled
-    - [x] Implement Internationalization (i18n) Infrastructure <!-- id: 25 -->
-        - [x] Configure Django i18n settings
-        - [x] Mark all strings for translation (using {% trans %} and {% blocktrans %})
-        - [x] Create initial translation files with current language (English)
-        - [x] Test translation system with English only
     - [x] Add Language Selector <!-- id: 26 -->
         - [x] Add language selector to navbar
         - [x] Implement language switching logic
@@ -102,7 +71,7 @@
     - [x] Update Login View to handle source selection
 - [ ] Verification & Deployment Prep
     - [x] Test functionality <!-- id: 10 -->
-    - [ ] Verify Security Requirements <!-- id: 21 -->
-        - [ ] Automated Security Tests (Password Policy, Crypto) <!-- id: 35 -->
-        - [ ] OWASP Pentesting (IDOR, Injection, Auth) <!-- id: 36 -->
-    - [ ] Manual Verification Walkthrough <!-- id: 22 -->
+    - [x] Verify Security Requirements <!-- id: 21 -->
+        - [x] Automated Security Tests (Password Policy, Crypto) <!-- id: 35 -->
+        - [x] OWASP Pentesting (IDOR, Injection, Auth) <!-- id: 36 -->
+    - [x] Manual Verification Walkthrough <!-- id: 22 -->

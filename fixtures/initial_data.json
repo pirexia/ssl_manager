@@ -1,0 +1,58 @@
+[
+    {
+        "model": "certificates.role",
+        "pk": 1,
+        "fields": {
+            "name": "ADMIN"
+        }
+    },
+    {
+        "model": "certificates.role",
+        "pk": 2,
+        "fields": {
+            "name": "USER"
+        }
+    },
+    {
+        "model": "certificates.passwordpolicy",
+        "pk": 1,
+        "fields": {
+            "role": 1,
+            "min_length": 16,
+            "require_uppercase": true,
+            "require_lowercase": true,
+            "require_numbers": true,
+            "require_special_chars": true,
+            "expiry_days": 90,
+            "history_length": 20
+        }
+    },
+    {
+        "model": "certificates.passwordpolicy",
+        "pk": 2,
+        "fields": {
+            "role": 2,
+            "min_length": 12,
+            "require_uppercase": true,
+            "require_lowercase": true,
+            "require_numbers": true,
+            "require_special_chars": true,
+            "expiry_days": 90,
+            "history_length": 20
+        }
+    },
+    {
+        "model": "certificates.domain",
+        "pk": 1,
+        "fields": {
+            "name": "example.com",
+            "description": "Example Domain",
+            "organization": "Example Corp",
+            "organizational_unit": "IT",
+            "country": "US",
+            "state": "California",
+            "locality": "San Francisco",
+            "email_address": "admin@example.com"
+        }
+    }
+]
