@@ -104,3 +104,4 @@
     - [x] Create User Manual (`docs/UserManual.md`) <!-- id: 51 -->
     - [x] Move Installation Guide to `docs/Installation.md` <!-- id: 52 -->
     - [x] Create Wiki Home (`docs/Home.md`) <!-- id: 53 -->
+    - [x] Create README.md <!-- id: 54 -->
