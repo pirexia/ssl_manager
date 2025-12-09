@@ -103,4 +103,6 @@
 - [ ] Verification & Deployment Prep
     - [x] Test functionality <!-- id: 10 -->
     - [ ] Verify Security Requirements <!-- id: 21 -->
+        - [ ] Automated Security Tests (Password Policy, Crypto) <!-- id: 35 -->
+        - [ ] OWASP Pentesting (IDOR, Injection, Auth) <!-- id: 36 -->
     - [ ] Manual Verification Walkthrough <!-- id: 22 -->

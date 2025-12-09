@@ -173,7 +173,9 @@ def generate_csr(request):
                 entry.save()
 
                 # Save to Storage Directory (organized by common_name)
-                storage_dir = os.path.join(settings.BASE_DIR, 'storage', entry.common_name)
+                from django.utils.text import get_valid_filename
+                safe_common_name = get_valid_filename(entry.common_name)
+                storage_dir = os.path.join(settings.BASE_DIR, 'storage', safe_common_name)
                 os.makedirs(storage_dir, exist_ok=True)
 
                 # Use timestamp as unique identifier for this iteration
@@ -285,6 +287,8 @@ def search_certificates(request):
 @login_required
 def certificate_detail(request, pk):
     entry = get_object_or_404(CertificateEntry, pk=pk)
+    if entry.created_by != request.user:
+        return HttpResponse(status=403)
     # Get all iterations for this common_name
     iterations = CertificateEntry.objects.filter(common_name=entry.common_name).order_by('-created_at')
     return render(request, 'certificate_detail.html', {'entry': entry, 'iterations': iterations})
@@ -292,6 +296,8 @@ def certificate_detail(request, pk):
 @login_required
 def download_file(request, pk, file_type):
     entry = get_object_or_404(CertificateEntry, pk=pk)
+    if entry.created_by != request.user:
+        return HttpResponse(status=403)
 
     if file_type == 'csr':
         content = entry.csr_content
@@ -315,6 +321,8 @@ from django.contrib.auth import update_session_auth_hash
 def upload_certificate(request, pk):
     """Vista para subir el certificado final a una CertificateEntry existente"""
     entry = get_object_or_404(CertificateEntry, pk=pk)
+    if entry.created_by != request.user:
+        return HttpResponse(status=403)
 
     if request.method == 'POST':
         form = CertificateUploadForm(request.POST, request.FILES)
@@ -366,6 +374,8 @@ def upload_certificate(request, pk):
 def download_certificate(request, pk, format):
     """Descargar certificado en diferentes formatos"""
     entry = get_object_or_404(CertificateEntry, pk=pk)
+    if entry.created_by != request.user:
+        return HttpResponse(status=403)
 
     if not entry.certificate_content:
         return HttpResponse("No certificate available", status=404)

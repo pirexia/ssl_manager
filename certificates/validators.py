@@ -22,13 +22,13 @@ def validate_password_complexity(password, user):
             require_lowercase = policy.require_lowercase
             require_numbers = policy.require_numbers
             require_special_chars = policy.require_special_chars
-            
+
             # Override min_length based on specific requirements if policy hasn't been updated
             if user.role.name == Role.ADMIN and min_length < 16:
                 min_length = 16
             elif user.role.name == Role.USER and min_length < 12:
                 min_length = 12
-                
+
         except PasswordPolicy.DoesNotExist:
             # Fallback defaults if policy record missing
             if user.role.name == Role.ADMIN:
@@ -71,3 +71,19 @@ def validate_password_history(password, user):
     for history_entry in recent_passwords:
         if check_password(password, history_entry.password_hash):
             raise ValidationError(f"You cannot reuse any of your last {history_length} passwords.")
+
+class ComplexityValidator:
+    def validate(self, password, user=None):
+        if user:
+            validate_password_complexity(password, user)
+
+    def get_help_text(self):
+        return "Your password must meet complexity requirements: uppercase, lowercase, numbers, and special characters."
+
+class HistoryValidator:
+    def validate(self, password, user=None):
+        if user:
+            validate_password_history(password, user)
+
+    def get_help_text(self):
+        return "You cannot reuse your recent passwords."
