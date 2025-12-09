@@ -18,7 +18,22 @@ def login_view(request):
 
         if user is not None:
             # Login successful
+            # Capture old session key to migrate cookie consent
+            old_session_key = request.session.session_key
+
             auth_login_func(request, user, backend=f'certificates.backends.SourceAware{"LDAP" if auth_source == "ldap" else "Model"}Backend')
+
+            # Migrate cookie consent to the authenticated user
+            if old_session_key:
+                from .models import CookieConsent
+                try:
+                    consent = CookieConsent.objects.get(session_key=old_session_key)
+                    consent.user = user
+                    consent.session_key = request.session.session_key  # Update to new session key
+                    consent.save()
+                except CookieConsent.DoesNotExist:
+                    pass
+
             # auth_source is already stored in session by the backend
             return redirect('mfa_login')  # Continue to MFA if enabled
         else:
@@ -594,6 +609,15 @@ def set_cookie_consent(request):
 
 def get_cookie_consent(request):
     """Check if user has accepted optional cookies"""
+    # Check user preference first if authenticated
+    if request.user.is_authenticated:
+        try:
+            # Check if there's a consent record for this user
+            consent = CookieConsent.objects.filter(user=request.user).latest('updated_at')
+            return consent.optional_cookies_accepted
+        except CookieConsent.DoesNotExist:
+            pass
+
     if not request.session.session_key:
         return None
 

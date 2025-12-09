@@ -105,6 +105,17 @@
         {% block content %}{% endblock %}
     </div>
 
+    <footer class="footer mt-5 py-3 bg-light border-top">
+        <div class="container text-center">
+            <span class="text-muted">
+                &copy; {% now "Y" %} {% trans "SSL Manager" %}.
+                <a href="#" onclick="resetCookieConsent(); return false;" class="text-decoration-none ms-2">
+                    <i class="bi bi-cookie"></i> {% trans "Cookie Preferences" %}
+                </a>
+            </span>
+        </div>
+    </footer>
+
     <!-- Cookie Consent Banner -->
     <div id="cookieBanner" class="position-fixed bottom-0 start-0 end-0 bg-dark text-white p-3"
         style="display: none; z-index: 9999;">
@@ -131,6 +142,12 @@
             if (!consentGiven) {
                 document.getElementById('cookieBanner').style.display = 'block';
             }
+        }
+
+        // Reset cookie consent
+        function resetCookieConsent() {
+            localStorage.removeItem('cookieConsentGiven');
+            document.getElementById('cookieBanner').style.display = 'block';
         }
 
         // Handle cookie consent
