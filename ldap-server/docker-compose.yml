@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: openldap-dev
+    environment:
+      LDAP_ORGANISATION: "SSL Manager"
+      LDAP_DOMAIN: "sslmanager.local"
+      LDAP_ADMIN_PASSWORD: "admin123"
+      LDAP_CONFIG_PASSWORD: "config123"
+      LDAP_BASE_DN: "dc=sslmanager,dc=local"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap-data:/var/lib/ldap
+      - ./ldap-config:/etc/ldap/slapd.d
+    command: --copy-service --loglevel debug
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: phpldapadmin-dev
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8080:80"
+    depends_on:
+      - openldap

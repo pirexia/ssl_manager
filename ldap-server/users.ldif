@@ -1,0 +1,49 @@
+# Organizational Unit for Users
+dn: ou=users,dc=sslmanager,dc=local
+objectClass: organizationalUnit
+ou: users
+
+# User 1: testuser (password: test123)
+dn: uid=testuser,ou=users,dc=sslmanager,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: testuser
+cn: Test User
+sn: User
+givenName: Test
+mail: testuser@sslmanager.local
+userPassword: test123
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/testuser
+
+# User 2: ldapuser (password: ldap123)
+dn: uid=ldapuser,ou=users,dc=sslmanager,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: ldapuser
+cn: LDAP User
+sn: User
+givenName: LDAP
+mail: ldapuser@sslmanager.local
+userPassword: ldap123
+uidNumber: 1001
+gidNumber: 1000
+homeDirectory: /home/ldapuser
+
+# User 3: adminuser (password: admin123)
+dn: uid=adminuser,ou=users,dc=sslmanager,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: adminuser
+cn: Admin User
+sn: User
+givenName: Admin
+mail: admin@sslmanager.local
+userPassword: admin123
+uidNumber: 1002
+gidNumber: 1000
+homeDirectory: /home/adminuser
