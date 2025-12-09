@@ -99,3 +99,8 @@
     - [x] Create Upgrade Script (upgrade.sh) <!-- id: 46 -->
     - [x] Update Documentation with Upgrade Instructions <!-- id: 47 -->
     - [x] Tag Release v1.0 in Git <!-- id: 48 -->
+- [x] Documentation / Wiki <!-- id: 49 -->
+    - [x] Organize Docs in `docs/` folder <!-- id: 50 -->
+    - [x] Create User Manual (`docs/UserManual.md`) <!-- id: 51 -->
+    - [x] Move Installation Guide to `docs/Installation.md` <!-- id: 52 -->
+    - [x] Create Wiki Home (`docs/Home.md`) <!-- id: 53 -->
