@@ -35,6 +35,7 @@ if [ -f /etc/redhat-release ]; then
     PKG_PYTHON="python3-devel"
     PKG_GCC="gcc"
     PKG_MYSQL="mariadb-devel"
+    PKG_MYSQL_SERVER="mariadb-server"
     PKG_LDAP="openldap-devel"
 elif [ -f /etc/debian_version ]; then
     OS="debian"
@@ -42,6 +43,7 @@ elif [ -f /etc/debian_version ]; then
     PKG_PYTHON="python3-dev"
     PKG_GCC="gcc"
     PKG_MYSQL="libmysqlclient-dev"
+    PKG_MYSQL_SERVER="mariadb-server"
     PKG_LDAP="libsasl2-dev libldap2-dev libssl-dev"
 else
     error "Unsupported OS. Only RHEL/CentOS and Debian/Ubuntu are supported."
@@ -106,17 +108,93 @@ if [ ! -f ".env" ]; then
 
     if [ "$DB_CHOICE" == "2" ]; then
         echo "DB_ENGINE=mysql" >> .env
-        read -p "Database Host [localhost]: " DB_HOST
-        read -p "Database Port [3306]: " DB_PORT
-        read -p "Database Name [ssl_manager]: " DB_NAME
-        read -p "Database User [ssl_user]: " DB_USER
-        read -s -p "Database Password: " DB_PASSWORD
-        echo ""
 
-        echo "DB_HOST=${DB_HOST:-localhost}" >> .env
-        echo "DB_PORT=${DB_PORT:-3306}" >> .env
-        echo "DB_NAME=${DB_NAME:-ssl_manager}" >> .env
-        echo "DB_USER=${DB_USER:-ssl_user}" >> .env
+        echo ""
+        echo "Database Location:"
+        echo "1) Local (Same Server)"
+        echo "2) Remote"
+        read -p "Enter choice [1]: " DB_LOC_CHOICE
+        DB_LOC_CHOICE=${DB_LOC_CHOICE:-1}
+
+        DB_HOST_VAL="localhost"
+        DB_PORT_VAL="3306"
+        DB_NAME_VAL="ssl_manager"
+        DB_USER_VAL="ssl_user"
+        DB_PASS_VAL=""
+
+        if [ "$DB_LOC_CHOICE" == "1" ]; then
+            # Local Database
+            DB_HOST_VAL="localhost"
+
+            # Check if MySQL/MariaDB is installed
+            log "Checking for local database server..."
+            if command -v mysql >/dev/null 2>&1 || systemctl list-units --full -all | grep -Fq "mariadb.service"; then
+                log "Local database server detected."
+
+                echo "--------------------------------------------------------"
+                echo "Please execute the following commands in your MySQL client to prepare the database:"
+                echo "1. Log in to MySQL as root: mysql -u root -p"
+                echo "2. Run:"
+                echo "   CREATE DATABASE ssl_manager CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+                echo "   CREATE USER 'ssl_user'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD';"
+                echo "   GRANT ALL PRIVILEGES ON ssl_manager.* TO 'ssl_user'@'localhost';"
+                echo "   FLUSH PRIVILEGES;"
+                echo "--------------------------------------------------------"
+                read -p "Press Enter once you have created the database and user..."
+            else
+                log "Local database server NOT detected. Installing MariaDB Server..."
+
+                if [ "$OS" == "rhel" ]; then
+                    $PKG_MANAGER install -y $PKG_MYSQL_SERVER
+                else
+                    export DEBIAN_FRONTEND=noninteractive
+                    $PKG_MANAGER install -y $PKG_MYSQL_SERVER
+                fi
+
+                log "Starting MariaDB service..."
+                systemctl enable --now mariadb
+
+                # Auto-configure option
+                echo ""
+                read -p "Automatically create database and user (ssl_manager / ssl_user)? [Y/n]: " AUTO_DB
+                if [[ ! "$AUTO_DB" =~ ^[Nn]$ ]]; then
+                    GEN_DB_PASS=$(python3 -c 'import secrets; print(secrets.token_urlsafe(16))')
+                    log "Configuring database..."
+                    mysql -e "CREATE DATABASE IF NOT EXISTS ssl_manager CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+                    mysql -e "CREATE USER IF NOT EXISTS 'ssl_user'@'localhost' IDENTIFIED BY '$GEN_DB_PASS';"
+                    mysql -e "GRANT ALL PRIVILEGES ON ssl_manager.* TO 'ssl_user'@'localhost';"
+                    mysql -e "FLUSH PRIVILEGES;"
+
+                    DB_NAME_VAL="ssl_manager"
+                    DB_USER_VAL="ssl_user"
+                    DB_PASS_VAL="$GEN_DB_PASS"
+
+                    success "Database created with password: $GEN_DB_PASS"
+                else
+                    echo "Skipping auto-configuration. Please create the database manually."
+                fi
+            fi
+        fi
+
+        # Connection Details
+        echo ""
+        read -p "Database Host [$DB_HOST_VAL]: " DB_HOST
+        read -p "Database Port [$DB_PORT_VAL]: " DB_PORT
+        read -p "Database Name [$DB_NAME_VAL]: " DB_NAME
+        read -p "Database User [$DB_USER_VAL]: " DB_USER
+
+        if [ -n "$DB_PASS_VAL" ]; then
+            echo "Using generated password."
+            DB_PASSWORD="$DB_PASS_VAL"
+        else
+            read -s -p "Database Password: " DB_PASSWORD
+            echo ""
+        fi
+
+        echo "DB_HOST=${DB_HOST:-$DB_HOST_VAL}" >> .env
+        echo "DB_PORT=${DB_PORT:-$DB_PORT_VAL}" >> .env
+        echo "DB_NAME=${DB_NAME:-$DB_NAME_VAL}" >> .env
+        echo "DB_USER=${DB_USER:-$DB_USER_VAL}" >> .env
         echo "DB_PASSWORD=$DB_PASSWORD" >> .env
     else
         echo "DB_ENGINE=sqlite3" >> .env

@@ -42,8 +42,10 @@ During installation, you will be prompted for:
 1.  **Database Engine**:
     - Choose `1` for **SQLite** (easiest, good for testing).
     - Choose `2` for **MySQL/MariaDB** (recommended for production).
-2.  **Database Credentials** (if MySQL is selected):
-    - Host, Port, Name, User, Password.
+2.  **Database Configuration** (if MySQL is selected):
+    - You will be asked if the database is **Local** or **Remote**.
+    - **Local**: The script checks if MariaDB is installed. If not, it can **automatically install and configure** it for you.
+    - **Remote**: You will need to provide the Host, Port, Database Name, User, and Password.
 3.  **Create Admin User**:
     - Choose `y` to create the initial superuser for logging in.
 4.  **Load Example Data**:
